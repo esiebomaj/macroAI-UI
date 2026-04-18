@@ -1,5 +1,60 @@
 import { useState, useRef, useEffect } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import api from '../lib/api'
+
+const MD_COMPONENTS = {
+  p: ({ node, ...props }) => <p style={{ margin: '0 0 8px' }} {...props} />,
+  ul: ({ node, ...props }) => <ul style={{ margin: '0 0 8px', paddingLeft: 18 }} {...props} />,
+  ol: ({ node, ...props }) => <ol style={{ margin: '0 0 8px', paddingLeft: 18 }} {...props} />,
+  li: ({ node, ...props }) => <li style={{ margin: '2px 0' }} {...props} />,
+  h1: ({ node, ...props }) => <h1 style={{ fontSize: 15, margin: '4px 0 6px', fontWeight: 600 }} {...props} />,
+  h2: ({ node, ...props }) => <h2 style={{ fontSize: 14, margin: '4px 0 6px', fontWeight: 600 }} {...props} />,
+  h3: ({ node, ...props }) => <h3 style={{ fontSize: 13, margin: '4px 0 6px', fontWeight: 600 }} {...props} />,
+  strong: ({ node, ...props }) => <strong style={{ fontWeight: 600 }} {...props} />,
+  em: ({ node, ...props }) => <em style={{ fontStyle: 'italic' }} {...props} />,
+  a: ({ node, ...props }) => (
+    <a target="_blank" rel="noreferrer" style={{ color: '#c8f066', textDecoration: 'underline' }} {...props} />
+  ),
+  code: ({ inline, children, ...props }) =>
+    inline ? (
+      <code
+        style={{
+          fontFamily: 'DM Mono, monospace', fontSize: 12,
+          background: '#0e0e0e', border: '1px solid #2a2a2a',
+          borderRadius: 4, padding: '1px 5px',
+        }}
+        {...props}
+      >{children}</code>
+    ) : (
+      <pre style={{
+        margin: '6px 0', padding: 10, background: '#0e0e0e',
+        border: '1px solid #2a2a2a', borderRadius: 6, overflowX: 'auto',
+        fontFamily: 'DM Mono, monospace', fontSize: 12, lineHeight: 1.45,
+      }}>
+        <code {...props}>{children}</code>
+      </pre>
+    ),
+  blockquote: ({ node, ...props }) => (
+    <blockquote
+      style={{
+        margin: '6px 0', padding: '2px 10px',
+        borderLeft: '2px solid #c8f066', color: '#bbb',
+      }}
+      {...props}
+    />
+  ),
+  table: ({ node, ...props }) => (
+    <table style={{ borderCollapse: 'collapse', margin: '6px 0', fontSize: 12 }} {...props} />
+  ),
+  th: ({ node, ...props }) => (
+    <th style={{ border: '1px solid #2a2a2a', padding: '4px 8px', textAlign: 'left' }} {...props} />
+  ),
+  td: ({ node, ...props }) => (
+    <td style={{ border: '1px solid #2a2a2a', padding: '4px 8px' }} {...props} />
+  ),
+  hr: () => <hr style={{ border: 0, borderTop: '1px solid #2a2a2a', margin: '8px 0' }} />,
+}
 
 const TOOL_LABELS = {
   log_food: 'Logging food',
@@ -40,7 +95,8 @@ function prettyToolComponent(j, name, args) {
 
       {/* <br /> */}
       {args.name && <div style={{ marginTop: 4, borderTop: '1px solid #2a2a2a', paddingTop: 4}}>
-      {args.name && <span style={{ fontWeight: 500, color: 'rgb(230 226 226)' }}>{args.qty || 1}x{args.name.slice(0, 10)} </span>}
+      {args.qty && <span style={{ fontWeight: 500, color: 'rgb(230 226 226)' }}>{args.qty}x </span>}
+      {args.name && <span style={{ fontWeight: 500, color: 'rgb(230 226 226)' }}>{args.name.slice(0, 10)} </span>}
       {args.pro && <span style={{ color: '#555', fontSize: 8}}>{args.pro}g Pro, </span>}
       {args.carb && <span style={{ color: '#555', fontSize: 8}}>{args.carb}g Carb,</span>}
       {args.fat && <span style={{ color: '#555', fontSize: 8}}>{args.fat}g Fat</span>}
@@ -126,9 +182,17 @@ export default function ChatPanel({ refetchAll }) {
               padding: '10px 14px',
               fontWeight: m.role === 'user' ? 500 : 400,
             }}>
-              {m.text.split('\n').map((line, j) => (
-                <span key={j}>{line}{j < m.text.split('\n').length - 1 && <br />}</span>
-              ))}
+              {m.role === 'user' ? (
+                m.text.split('\n').map((line, j) => (
+                  <span key={j}>{line}{j < m.text.split('\n').length - 1 && <br />}</span>
+                ))
+              ) : (
+                <div className="chat-md" style={{ whiteSpace: 'normal' }}>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]} components={MD_COMPONENTS}>
+                    {m.text}
+                  </ReactMarkdown>
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -164,6 +228,8 @@ export default function ChatPanel({ refetchAll }) {
       <style>{`
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
         @keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
+        .chat-md { word-break: break-word; overflow-wrap: anywhere; }
+        .chat-md > *:last-child { margin-bottom: 0 !important; }
       `}</style>
     </div>
   )
