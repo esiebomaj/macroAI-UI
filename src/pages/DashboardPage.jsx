@@ -107,7 +107,7 @@ export default function DashboardPage() {
 
       {/* Right panel — chat */}
       <ChatPanel
-        addLogEntry={tracker.addLogEntry}
+        refetchAll={tracker.fetchAll}
       />
     </div>
   )

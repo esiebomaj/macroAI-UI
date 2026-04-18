@@ -8,8 +8,8 @@ export function useTracker() {
   const [history, setHistory] = useState({})
   const [loading, setLoading] = useState(true)
 
-  const fetchAll = useCallback(async () => {
-    setLoading(true)
+  const fetchAll = useCallback(async (withLoading = true) => {
+    if (withLoading) setLoading(true)
     try {
       const [goalsRes, logRes, libRes] = await Promise.all([
         api.get('/goals/'),
@@ -22,7 +22,7 @@ export function useTracker() {
     } catch (e) {
       console.error('Failed to load data', e)
     } finally {
-      setLoading(false)
+      if (withLoading) setLoading(false)
     }
   }, [])
 
@@ -73,7 +73,7 @@ export function useTracker() {
 
   return {
     goals, todayLog, library, history,
-    loading, fetchHistory,
+    loading, fetchAll, fetchHistory,
     addLogEntry, removeLogEntry,
     addFood, updateFood, removeFood,
     saveGoals,
