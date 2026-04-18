@@ -58,11 +58,13 @@ export default function ChatPanel({ refetchAll }) {
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
   const [chatHistory, setChatHistory] = useState([])
-  const bottomRef = useRef(null)
+  const messagesRef = useRef(null)
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+    const el = messagesRef.current
+    if (!el) return
+    el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+  }, [messages, busy])
 
   function handleKey(e) {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() }
@@ -105,7 +107,7 @@ export default function ChatPanel({ refetchAll }) {
       </div>
 
       {/* Messages */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '1.2rem 1.5rem', display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div ref={messagesRef} style={{ flex: 1, overflowY: 'auto', overscrollBehavior: 'contain', padding: '1.2rem 1.5rem', display: 'flex', flexDirection: 'column', gap: 12 }}>
         {messages.map((m, i) => (
           <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 4, alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start', maxWidth: '90%' }}>
             {m.toolCalls?.length > 0 && (
@@ -138,7 +140,6 @@ export default function ChatPanel({ refetchAll }) {
             ))}
           </div>
         )}
-        <div ref={bottomRef} />
       </div>
 
       {/* Input */}
