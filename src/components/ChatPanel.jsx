@@ -107,7 +107,7 @@ function prettyToolComponent(j, name, args) {
   )
 }
 
-export default function ChatPanel({ refetchAll }) {
+export default function ChatPanel({ refetchAll, isMobile = false, onClose }) {
   const [messages, setMessages] = useState([
     { role: 'ai', text: "Hey! Tell me what you ate and I'll log it straight to your account.\n\nTry: \"Log 2 eggs and a banana for breakfast\" or \"What have I eaten today?\"" }
   ])
@@ -154,16 +154,35 @@ export default function ChatPanel({ refetchAll }) {
     }
   }
 
+  const rootStyle = isMobile
+    ? { display: 'flex', flexDirection: 'column', background: '#161616', height: '100dvh', width: '100%' }
+    : { display: 'flex', flexDirection: 'column', background: '#161616', height: '100vh', position: 'sticky', top: 0 }
+
+  const pad = isMobile ? '1rem 1rem' : '1.2rem 1.5rem'
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', background: '#161616', height: '100vh', position: 'sticky', top: 0 }}>
+    <div style={rootStyle}>
       {/* Header */}
-      <div style={{ padding: '1.2rem 1.5rem', borderBottom: '1px solid #2a2a2a', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#666', display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{ padding: pad, borderBottom: '1px solid #2a2a2a', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#666', display: 'flex', alignItems: 'center', gap: 8 }}>
         <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#c8f066', animation: 'pulse 2s infinite' }} />
-        AI Assistant
+        <span style={{ flex: 1 }}>AI Assistant</span>
+        {isMobile && onClose && (
+          <button
+            onClick={onClose}
+            aria-label="Close chat"
+            style={{
+              background: 'none', border: '1px solid #2a2a2a', borderRadius: 6,
+              width: 30, height: 30, color: '#888', cursor: 'pointer',
+              fontSize: 18, lineHeight: 1, padding: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontFamily: 'DM Sans, sans-serif',
+            }}
+          >×</button>
+        )}
       </div>
 
       {/* Messages */}
-      <div ref={messagesRef} style={{ flex: 1, overflowY: 'auto', overscrollBehavior: 'contain', padding: '1.2rem 1.5rem', display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div ref={messagesRef} style={{ flex: 1, overflowY: 'auto', overscrollBehavior: 'contain', padding: pad, display: 'flex', flexDirection: 'column', gap: 12 }}>
         {messages.map((m, i) => (
           <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 4, alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start', maxWidth: '90%' }}>
             {m.toolCalls?.length > 0 && (
@@ -207,14 +226,17 @@ export default function ChatPanel({ refetchAll }) {
       </div>
 
       {/* Input */}
-      <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid #2a2a2a', display: 'flex', gap: 8 }}>
+      <div style={{
+        padding: isMobile ? `0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom))` : '1rem 1.5rem',
+        borderTop: '1px solid #2a2a2a', display: 'flex', gap: 8,
+      }}>
         <textarea
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={handleKey}
           placeholder="Tell me what you ate..."
           disabled={busy}
-          style={{ flex: 1, padding: '10px 12px', background: '#1f1f1f', border: '1px solid #2a2a2a', borderRadius: 8, color: 'white', fontSize: 13, fontFamily: 'DM Sans, sans-serif', outline: 'none', resize: 'none', height: 42 }}
+          style={{ flex: 1, padding: '10px 12px', background: '#1f1f1f', border: '1px solid #2a2a2a', borderRadius: 8, color: 'white', fontSize: 16, fontFamily: 'DM Sans, sans-serif', outline: 'none', resize: 'none', height: 44, minWidth: 0 }}
         />
         <button
           onClick={send}

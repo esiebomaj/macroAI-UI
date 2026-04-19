@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 export default function LibraryTab({ library, addFood, updateFood, removeFood }) {
+  const isMobile = useIsMobile()
   const [form, setForm] = useState({ name: '', cal: '', pro: '', carb: '', fat: '', unit: '' })
   const [editingId, setEditingId] = useState(null)
   const [editForm, setEditForm] = useState({})
@@ -28,7 +30,12 @@ export default function LibraryTab({ library, addFood, updateFood, removeFood })
 
   const card = { background: '#161616', border: '1px solid #2a2a2a', borderRadius: 10, padding: '14px 16px', marginBottom: 8 }
   const grid2 = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }
-  const editGrid = { display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr', gap: 6, marginTop: 10 }
+  const editGrid = {
+    display: 'grid',
+    gridTemplateColumns: isMobile ? '1fr 1fr' : '2fr 1fr 1fr 1fr 1fr',
+    gap: 6,
+    marginTop: 10,
+  }
 
   return (
     <div>
@@ -52,12 +59,12 @@ export default function LibraryTab({ library, addFood, updateFood, removeFood })
       {!library.length && <div style={{ textAlign: 'center', padding: '2rem', color: '#666', fontSize: 13 }}>No foods in your library yet.</div>}
       {library.map(f => (
         <div key={f.id} style={card}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <div style={{ fontSize: 13, fontWeight: 500 }}>{f.name}</div>
-              <div style={{ fontSize: 11, color: '#666', fontFamily: 'DM Mono, monospace', marginTop: 2 }}>{f.unit} · {f.cal}kcal · P:{f.pro}g C:{f.carb}g F:{f.fat}g</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10, flexWrap: 'wrap' }}>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ fontSize: 13, fontWeight: 500, overflowWrap: 'anywhere' }}>{f.name}</div>
+              <div style={{ fontSize: 11, color: '#666', fontFamily: 'DM Mono, monospace', marginTop: 2, overflowWrap: 'anywhere' }}>{f.unit} · {f.cal}kcal · P:{f.pro}g C:{f.carb}g F:{f.fat}g</div>
             </div>
-            <div style={{ display: 'flex', gap: 6 }}>
+            <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
               <button onClick={() => editingId === f.id ? setEditingId(null) : startEdit(f)} style={{ background:'none', border:'1px solid #2a2a2a', borderRadius:5, padding:'4px 10px', fontSize:11, cursor:'pointer', color:'#666', fontFamily:'DM Sans, sans-serif' }}>
                 {editingId === f.id ? 'cancel' : 'edit'}
               </button>
@@ -71,8 +78,16 @@ export default function LibraryTab({ library, addFood, updateFood, removeFood })
 
           {editingId === f.id && (
             <div style={{ borderTop: '1px solid #2a2a2a', marginTop: 10, paddingTop: 10 }}>
+              {isMobile && (
+                <div style={{ marginBottom: 8 }}>
+                  <div style={{ fontSize: 10, color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 3 }}>Name</div>
+                  <input value={editForm.name} onChange={e => setEditForm(p=>({...p,name:e.target.value}))} />
+                </div>
+              )}
               <div style={editGrid}>
-                <div><div style={{ fontSize: 10, color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 3 }}>Name</div><input value={editForm.name} onChange={e => setEditForm(p=>({...p,name:e.target.value}))} /></div>
+                {!isMobile && (
+                  <div><div style={{ fontSize: 10, color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 3 }}>Name</div><input value={editForm.name} onChange={e => setEditForm(p=>({...p,name:e.target.value}))} /></div>
+                )}
                 <div><div style={{ fontSize: 10, color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 3 }}>Calories</div><input type="number" value={editForm.cal} onChange={e => setEditForm(p=>({...p,cal:e.target.value}))} /></div>
                 <div><div style={{ fontSize: 10, color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 3 }}>Protein g</div><input type="number" value={editForm.pro} onChange={e => setEditForm(p=>({...p,pro:e.target.value}))} /></div>
                 <div><div style={{ fontSize: 10, color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 3 }}>Carbs g</div><input type="number" value={editForm.carb} onChange={e => setEditForm(p=>({...p,carb:e.target.value}))} /></div>

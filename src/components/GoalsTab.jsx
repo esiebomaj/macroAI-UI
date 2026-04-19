@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 export default function GoalsTab({ goals, saveGoals }) {
+  const isMobile = useIsMobile()
   const [form, setForm] = useState({ cal: '', pro: '', carb: '', fat: '', weight: '', goal_weight: '' })
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -50,7 +52,7 @@ export default function GoalsTab({ goals, saveGoals }) {
       {/* Summary */}
       <div style={card}>
         <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#666', marginBottom: 12 }}>Current goals</div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8, marginBottom: diff ? 12 : 0 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4,1fr)', gap: 8, marginBottom: diff ? 12 : 0 }}>
           {[
             { label: 'Calories', val: goals.cal, sub: 'kcal/day' },
             { label: 'Protein', val: goals.pro+'g', sub: 'per day' },

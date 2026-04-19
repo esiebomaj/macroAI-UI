@@ -27,6 +27,22 @@ const DEMO_SPEED = 1.2
 const SHOW_DIAGNOSTICS = true
 
 /* ============================================================
+   Responsive hook
+   ============================================================ */
+
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < breakpoint : false
+  )
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < breakpoint)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [breakpoint])
+  return isMobile
+}
+
+/* ============================================================
    Small building blocks
    ============================================================ */
 
@@ -88,6 +104,15 @@ const Logo = ({ size = 13 }) => (
    ============================================================ */
 
 function Nav() {
+  const isMobile = useIsMobile()
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  const links = [
+    { label: 'Product', link: '#product' },
+    { label: 'How it works', link: '#how-it-works' },
+    { label: 'FAQ', link: '#faq' },
+  ]
+
   return (
     <nav
       style={{
@@ -107,67 +132,189 @@ function Nav() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '14px 28px',
+          padding: isMobile ? '12px 16px' : '14px 28px',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 0 : 28 }}>
           <Logo />
-          <div style={{ display: 'flex', gap: 22 }}>
-            {[{label:'Product', link:'#product'}, {label:'How it works', link:'#how-it-works'}, {label:'FAQ', link:'#faq'}].map((item) => (
-              <a
-                key={item.label}
-                href={item.link}
-                className="mono"
-                style={{
-                  fontSize: 11,
-                  letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
-                  color: TOKENS.muted2,
-                  transition: 'color .15s',
-                  textDecoration: 'none',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#cfcfcf')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = TOKENS.muted2)}
-              >
-                {item.label}
-              </a>
-            ))}
-          </div>
+          {!isMobile && (
+            <div style={{ display: 'flex', gap: 22 }}>
+              {links.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.link}
+                  className="mono"
+                  style={{
+                    fontSize: 11,
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase',
+                    color: TOKENS.muted2,
+                    transition: 'color .15s',
+                    textDecoration: 'none',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = '#cfcfcf')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = TOKENS.muted2)}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          )}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+
+        {isMobile ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Link
+              to="/auth"
+              className="mono"
+              style={{
+                fontSize: 10,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                background: TOKENS.accent,
+                color: '#0a0a0a',
+                padding: '8px 12px',
+                borderRadius: 4,
+                fontWeight: 500,
+                textDecoration: 'none',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Start free
+            </Link>
+            <button
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              onClick={() => setMenuOpen((v) => !v)}
+              style={{
+                width: 36,
+                height: 36,
+                display: 'inline-flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: 4,
+                background: 'transparent',
+                border: `1px solid ${TOKENS.line2}`,
+                borderRadius: 4,
+                cursor: 'pointer',
+                padding: 0,
+              }}
+            >
+              <span
+                style={{
+                  width: 16,
+                  height: 1.5,
+                  background: '#cfcfcf',
+                  transition: 'transform .2s, opacity .2s',
+                  transform: menuOpen ? 'translateY(3px) rotate(45deg)' : 'none',
+                }}
+              />
+              <span
+                style={{
+                  width: 16,
+                  height: 1.5,
+                  background: '#cfcfcf',
+                  transition: 'opacity .15s',
+                  opacity: menuOpen ? 0 : 1,
+                }}
+              />
+              <span
+                style={{
+                  width: 16,
+                  height: 1.5,
+                  background: '#cfcfcf',
+                  transition: 'transform .2s, opacity .2s',
+                  transform: menuOpen ? 'translateY(-3px) rotate(-45deg)' : 'none',
+                }}
+              />
+            </button>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Link
+              to="/auth"
+              className="mono"
+              style={{
+                fontSize: 11,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                color: TOKENS.muted2,
+                padding: '8px 12px',
+                textDecoration: 'none',
+              }}
+            >
+              Sign in
+            </Link>
+            <Link
+              to="/auth"
+              className="mono"
+              style={{
+                fontSize: 11,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                background: TOKENS.accent,
+                color: '#0a0a0a',
+                padding: '9px 14px',
+                borderRadius: 4,
+                fontWeight: 500,
+                textDecoration: 'none',
+              }}
+            >
+              Start free →
+            </Link>
+          </div>
+        )}
+      </div>
+
+      {isMobile && menuOpen && (
+        <div
+          style={{
+            borderTop: `1px solid ${TOKENS.line}`,
+            background: 'rgba(10,10,10,0.95)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            padding: '8px 16px 16px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+          }}
+        >
+          {links.map((item) => (
+            <a
+              key={item.label}
+              href={item.link}
+              onClick={() => setMenuOpen(false)}
+              className="mono"
+              style={{
+                fontSize: 12,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                color: '#cfcfcf',
+                padding: '14px 4px',
+                borderBottom: `1px solid ${TOKENS.line}`,
+                textDecoration: 'none',
+              }}
+            >
+              {item.label}
+            </a>
+          ))}
           <Link
             to="/auth"
+            onClick={() => setMenuOpen(false)}
             className="mono"
             style={{
-              fontSize: 11,
+              fontSize: 12,
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
-              color: TOKENS.muted2,
-              padding: '8px 12px',
+              color: TOKENS.muted,
+              padding: '14px 4px',
               textDecoration: 'none',
             }}
           >
             Sign in
           </Link>
-          <Link
-            to="/auth"
-            className="mono"
-            style={{
-              fontSize: 11,
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              background: TOKENS.accent,
-              color: '#0a0a0a',
-              padding: '9px 14px',
-              borderRadius: 4,
-              fontWeight: 500,
-              textDecoration: 'none',
-            }}
-          >
-            Start free →
-          </Link>
         </div>
-      </div>
+      )}
     </nav>
   )
 }
@@ -402,6 +549,7 @@ function ChatBubble({ step }) {
 function HeroChat() {
   const visible = useDemoPlayer(DEMO_SCRIPT, DEMO_SPEED)
   const scrollRef = useRef(null)
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -445,12 +593,12 @@ function HeroChat() {
       <div
         ref={scrollRef}
         style={{
-          padding: '18px 18px 10px',
+          padding: isMobile ? '14px 14px 8px' : '18px 18px 10px',
           display: 'flex',
           flexDirection: 'column',
           gap: 10,
-          minHeight: 420,
-          maxHeight: 420,
+          minHeight: isMobile ? 360 : 420,
+          maxHeight: isMobile ? 360 : 420,
           overflow: 'hidden',
         }}
       >
@@ -496,6 +644,7 @@ const HEADLINE = {
 }
 
 function Hero() {
+  const isMobile = useIsMobile()
   return (
     <section
       style={{
@@ -522,32 +671,40 @@ function Hero() {
         style={{
           maxWidth: 1240,
           margin: '0 auto',
-          padding: '72px 28px 96px',
+          padding: isMobile ? '40px 16px 72px' : '72px 28px 96px',
           display: 'grid',
-          gridTemplateColumns: '1.05fr 1fr',
-          gap: 64,
+          gridTemplateColumns: isMobile ? '1fr' : '1.05fr 1fr',
+          gap: isMobile ? 40 : 64,
           alignItems: 'center',
           position: 'relative',
           zIndex: 1,
         }}
       >
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              marginBottom: isMobile ? 18 : 24,
+              flexWrap: 'wrap',
+            }}
+          >
             <Dot color={TOKENS.accent} style={{ animation: 'pulse 2s infinite' }} />
             <MonoLabel color={TOKENS.accent}>{HEADLINE.pre}</MonoLabel>
-            <Hairline style={{ flex: 1, maxWidth: 120 }} />
-            <MonoLabel>v2.0 · live</MonoLabel>
+            {!isMobile && <Hairline style={{ flex: 1, maxWidth: 120 }} />}
+            {!isMobile && <MonoLabel>v2.0 · live</MonoLabel>}
           </div>
 
           <h1
             style={{
               fontFamily: 'DM Sans, sans-serif',
-              fontSize: 'clamp(44px, 5.6vw, 78px)',
+              fontSize: isMobile ? 'clamp(36px, 10vw, 52px)' : 'clamp(44px, 5.6vw, 78px)',
               lineHeight: 1.02,
               letterSpacing: '-0.03em',
               fontWeight: 500,
               color: '#f4f4f4',
-              marginBottom: 26,
+              marginBottom: isMobile ? 18 : 26,
             }}
           >
             {HEADLINE.main.map((part, i) =>
@@ -567,23 +724,30 @@ function Hero() {
 
           <p
             style={{
-              fontSize: 18,
+              fontSize: isMobile ? 15 : 18,
               color: '#b8b8b8',
               maxWidth: 480,
               lineHeight: 1.55,
-              marginBottom: 32,
+              marginBottom: isMobile ? 24 : 32,
             }}
           >
             {HEADLINE.sub}
           </p>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 36 }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              marginBottom: isMobile ? 12 : 36,
+            }}
+          >
             <Link
               to="/auth"
               style={{
                 background: TOKENS.accent,
                 color: '#0a0a0a',
-                padding: '14px 22px',
+                padding: isMobile ? '13px 20px' : '14px 22px',
                 borderRadius: 5,
                 fontFamily: 'DM Mono, monospace',
                 fontSize: 12,
@@ -602,7 +766,12 @@ function Hero() {
           </div>
         </div>
 
-        <div style={{ position: 'relative' }}>
+        <div
+          style={{
+            position: 'relative',
+            marginBottom: isMobile ? 48 : 0,
+          }}
+        >
           <HeroChat />
           <StatsFloat />
         </div>
@@ -612,20 +781,23 @@ function Hero() {
 }
 
 function StatsFloat() {
+  const isMobile = useIsMobile()
   return (
     <div
       style={{
-        position: 'absolute',
-        left: -24,
-        bottom: -28,
+        position: isMobile ? 'static' : 'absolute',
+        left: isMobile ? undefined : -24,
+        bottom: isMobile ? undefined : -28,
+        marginTop: isMobile ? 16 : 0,
         background: TOKENS.bg2,
         border: `1px solid ${TOKENS.line2}`,
         borderRadius: 8,
-        padding: '12px 16px',
+        padding: isMobile ? '12px 14px' : '12px 16px',
         display: 'flex',
         alignItems: 'center',
-        gap: 18,
+        gap: isMobile ? 14 : 18,
         boxShadow: '0 10px 30px rgba(0,0,0,.4)',
+        flexWrap: 'wrap',
       }}
     >
       <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -681,6 +853,7 @@ function MacroPills() {
    ============================================================ */
 
 function TrustBand() {
+  const isMobile = useIsMobile()
   const items = [
     'GPT-4o class model',
     'Supabase Auth',
@@ -695,16 +868,26 @@ function TrustBand() {
         style={{
           maxWidth: 1240,
           margin: '0 auto',
-          padding: '20px 28px',
+          padding: isMobile ? '16px 16px' : '20px 28px',
           display: 'flex',
-          alignItems: 'center',
-          gap: 28,
+          alignItems: isMobile ? 'flex-start' : 'center',
+          flexDirection: isMobile ? 'column' : 'row',
+          gap: isMobile ? 10 : 28,
           overflow: 'hidden',
         }}
       >
-        <MonoLabel style={{ whiteSpace: 'nowrap' }}>BUILT ON</MonoLabel>
-        <Hairline style={{ width: 20, flexShrink: 0 }} />
-        <div style={{ display: 'flex', gap: 36, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <MonoLabel style={{ whiteSpace: 'nowrap' }}>BUILT ON</MonoLabel>
+          <Hairline style={{ width: 20, flexShrink: 0 }} />
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            gap: isMobile ? 18 : 36,
+            flexWrap: 'wrap',
+            rowGap: isMobile ? 8 : 10,
+          }}
+        >
           {items.map((x) => (
             <span
               key={x}
@@ -725,12 +908,13 @@ function TrustBand() {
    ============================================================ */
 
 function SectionHeader({ kicker, title, sub, align = 'left' }) {
+  const isMobile = useIsMobile()
   return (
     <div
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: 14,
+        gap: isMobile ? 10 : 14,
         maxWidth: 720,
         ...(align === 'center' ? { margin: '0 auto', textAlign: 'center' } : {}),
       }}
@@ -748,7 +932,7 @@ function SectionHeader({ kicker, title, sub, align = 'left' }) {
       </div>
       <h2
         style={{
-          fontSize: 'clamp(34px, 3.8vw, 52px)',
+          fontSize: isMobile ? 'clamp(28px, 7.5vw, 38px)' : 'clamp(34px, 3.8vw, 52px)',
           lineHeight: 1.05,
           letterSpacing: '-0.025em',
           fontWeight: 500,
@@ -760,9 +944,10 @@ function SectionHeader({ kicker, title, sub, align = 'left' }) {
       {sub && (
         <p
           style={{
-            fontSize: 17,
+            fontSize: isMobile ? 15 : 17,
             color: TOKENS.muted,
             maxWidth: 560,
+            lineHeight: 1.55,
             ...(align === 'center' ? { margin: '0 auto' } : {}),
           }}
         >
@@ -774,8 +959,14 @@ function SectionHeader({ kicker, title, sub, align = 'left' }) {
 }
 
 function ComparisonSection() {
+  const isMobile = useIsMobile()
   return (
-    <section style={{ borderBottom: `1px solid ${TOKENS.line}`, padding: '96px 28px' }}>
+    <section
+      style={{
+        borderBottom: `1px solid ${TOKENS.line}`,
+        padding: isMobile ? '56px 16px' : '96px 28px',
+      }}
+    >
       <div style={{ maxWidth: 1240, margin: '0 auto' }}>
         <SectionHeader
           kicker="THE PROBLEM"
@@ -793,23 +984,23 @@ function ComparisonSection() {
 
         <div
           style={{
-            marginTop: 56,
+            marginTop: isMobile ? 32 : 56,
             display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
             border: `1px solid ${TOKENS.line2}`,
             borderRadius: 8,
             overflow: 'hidden',
           }}
         >
-          <OldWay />
-          <NewWay />
+          <OldWay isMobile={isMobile} />
+          <NewWay isMobile={isMobile} />
         </div>
       </div>
     </section>
   )
 }
 
-function OldWay() {
+function OldWay({ isMobile }) {
   const steps = [
     'Open barcode scanner',
     "Search 'chicken breast grilled'",
@@ -821,8 +1012,9 @@ function OldWay() {
   return (
     <div
       style={{
-        padding: '28px 28px 32px',
-        borderRight: `1px solid ${TOKENS.line2}`,
+        padding: isMobile ? '22px 20px 24px' : '28px 28px 32px',
+        borderRight: isMobile ? 'none' : `1px solid ${TOKENS.line2}`,
+        borderBottom: isMobile ? `1px solid ${TOKENS.line2}` : 'none',
         background: '#0b0b0b',
       }}
     >
@@ -862,9 +1054,14 @@ function OldWay() {
   )
 }
 
-function NewWay() {
+function NewWay({ isMobile }) {
   return (
-    <div style={{ padding: '28px 28px 32px', background: '#0d0f09' }}>
+    <div
+      style={{
+        padding: isMobile ? '22px 20px 24px' : '28px 28px 32px',
+        background: '#0d0f09',
+      }}
+    >
       <MonoLabel color={TOKENS.accent} style={{ marginBottom: 14, display: 'block' }}>
         MACRO.AI
       </MonoLabel>
@@ -936,12 +1133,13 @@ function NewWay() {
    ============================================================ */
 
 function AppPreview() {
+  const isMobile = useIsMobile()
   return (
     <section
       id="product"
       style={{
         borderBottom: `1px solid ${TOKENS.line}`,
-        padding: '96px 28px',
+        padding: isMobile ? '56px 16px' : '96px 28px',
         background: '#0a0a0a',
       }}
     >
@@ -954,7 +1152,7 @@ function AppPreview() {
 
         <div
           style={{
-            marginTop: 56,
+            marginTop: isMobile ? 32 : 56,
             border: `1px solid ${TOKENS.line2}`,
             borderRadius: 10,
             overflow: 'hidden',
@@ -984,25 +1182,34 @@ function AppPreview() {
                 color: TOKENS.muted2,
                 fontFamily: 'DM Mono, monospace',
                 letterSpacing: '0.05em',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
               }}
             >
               app.macro.ai / dashboard
             </div>
-            <div style={{ width: 70 }} />
+            {!isMobile && <div style={{ width: 70 }} />}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', minHeight: 560 }}>
-            <AppLogTab />
-            <AppChat />
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 360px',
+              minHeight: isMobile ? 'auto' : 560,
+            }}
+          >
+            <AppLogTab isMobile={isMobile} />
+            <AppChat isMobile={isMobile} />
           </div>
         </div>
 
         <div
           style={{
-            marginTop: 40,
+            marginTop: isMobile ? 28 : 40,
             display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: 24,
+            gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+            gap: isMobile ? 18 : 24,
           }}
         >
           {[
@@ -1020,8 +1227,18 @@ function AppPreview() {
                 <MonoLabel color={TOKENS.accent}>{f.k}</MonoLabel>
                 <Hairline style={{ flex: 1 }} />
               </div>
-              <div style={{ fontSize: 16, color: '#e6e6e6', fontWeight: 500 }}>{f.t}</div>
-              <div style={{ fontSize: 13.5, color: TOKENS.muted, lineHeight: 1.55 }}>{f.d}</div>
+              <div style={{ fontSize: isMobile ? 14 : 16, color: '#e6e6e6', fontWeight: 500 }}>
+                {f.t}
+              </div>
+              <div
+                style={{
+                  fontSize: isMobile ? 12.5 : 13.5,
+                  color: TOKENS.muted,
+                  lineHeight: 1.55,
+                }}
+              >
+                {f.d}
+              </div>
             </div>
           ))}
         </div>
@@ -1030,21 +1247,29 @@ function AppPreview() {
   )
 }
 
-function AppLogTab() {
+function AppLogTab({ isMobile }) {
   return (
     <div
       style={{
-        padding: '22px 26px',
-        borderRight: `1px solid ${TOKENS.line2}`,
+        padding: isMobile ? '18px 16px' : '22px 26px',
+        borderRight: isMobile ? 'none' : `1px solid ${TOKENS.line2}`,
+        borderBottom: isMobile ? `1px solid ${TOKENS.line2}` : 'none',
         display: 'flex',
         flexDirection: 'column',
-        gap: 18,
+        gap: isMobile ? 14 : 18,
       }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: 10,
+        }}
+      >
         <Logo size={12} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <MonoLabel>you@macro.ai</MonoLabel>
+          {!isMobile && <MonoLabel>you@macro.ai</MonoLabel>}
           <div
             style={{
               border: `1px solid ${TOKENS.line2}`,
@@ -1057,14 +1282,22 @@ function AppLogTab() {
         </div>
       </div>
 
-      <div style={{ display: 'flex', borderBottom: `1px solid ${TOKENS.line2}` }}>
+      <div
+        style={{
+          display: 'flex',
+          borderBottom: `1px solid ${TOKENS.line2}`,
+          overflowX: 'auto',
+          scrollbarWidth: 'none',
+        }}
+      >
         {['Log', 'Library', 'History', 'Goals'].map((t, i) => (
           <div
             key={t}
             style={{
-              padding: '8px 18px',
+              padding: isMobile ? '8px 14px' : '8px 18px',
               borderBottom: i === 0 ? `2px solid ${TOKENS.accent}` : '2px solid transparent',
               marginBottom: -1,
+              whiteSpace: 'nowrap',
             }}
           >
             <span
@@ -1083,7 +1316,13 @@ function AppLogTab() {
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+          gap: isMobile ? 8 : 12,
+        }}
+      >
         {[
           { k: 'CALORIES', v: 1959, g: 2000, c: '#e8e8e8' },
           { k: 'PROTEIN', v: 166, g: 160, c: TOKENS.protein, unit: 'g' },
@@ -1127,6 +1366,7 @@ function AppLogTab() {
           name="LUNCH"
           kcal={839}
           p={86}
+          isMobile={isMobile}
           items={[
             { n: '3× Large carrot', p: 1.8, c: 18, f: 0.3, k: 75 },
             { n: '2× Chicken breast', p: 62, c: 0, f: 7.2, k: 330 },
@@ -1139,6 +1379,7 @@ function AppLogTab() {
           name="DINNER"
           kcal={1120}
           p={80}
+          isMobile={isMobile}
           items={[
             { n: '5× Large egg', p: 32.5, c: 2, f: 25, k: 375 },
             { n: 'Protein drink', p: 35, c: 23, f: 17, k: 400 },
@@ -1150,7 +1391,7 @@ function AppLogTab() {
   )
 }
 
-function Meal({ name, kcal, p, items }) {
+function Meal({ name, kcal, p, items, isMobile }) {
   return (
     <div
       style={{
@@ -1179,34 +1420,50 @@ function Meal({ name, kcal, p, items }) {
         <div
           key={i}
           style={{
-            padding: '7px 14px',
+            padding: isMobile ? '7px 12px' : '7px 14px',
             display: 'grid',
-            gridTemplateColumns: '1fr auto auto auto',
+            gridTemplateColumns: isMobile ? '1fr auto auto' : '1fr auto auto auto',
             alignItems: 'center',
-            gap: 10,
+            gap: isMobile ? 8 : 10,
             borderBottom: i < items.length - 1 ? '1px solid #161616' : 'none',
             fontSize: 13,
           }}
         >
-          <span style={{ color: '#dcdcdc' }}>{it.n}</span>
-          <span className="mono" style={{ fontSize: 10, color: TOKENS.muted }}>
-            P:{it.p}g C:{it.c}g F:{it.f}g
+          <span
+            style={{
+              color: '#dcdcdc',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {it.n}
           </span>
+          {!isMobile && (
+            <span className="mono" style={{ fontSize: 10, color: TOKENS.muted }}>
+              P:{it.p}g C:{it.c}g F:{it.f}g
+            </span>
+          )}
+          {isMobile && (
+            <span className="mono" style={{ fontSize: 10, color: TOKENS.muted }}>
+              {it.p}g P
+            </span>
+          )}
           <span className="mono" style={{ fontSize: 11, minWidth: 40, textAlign: 'right' }}>
             {it.k}
           </span>
-          <span style={{ color: '#333', fontSize: 12 }}>×</span>
+          {!isMobile && <span style={{ color: '#333', fontSize: 12 }}>×</span>}
         </div>
       ))}
     </div>
   )
 }
 
-function AppChat() {
+function AppChat({ isMobile }) {
   return (
     <div
       style={{
-        padding: '22px 20px',
+        padding: isMobile ? '18px 16px' : '22px 20px',
         display: 'flex',
         flexDirection: 'column',
         gap: 10,
@@ -1304,6 +1561,7 @@ function ChatMsg({ side, children, rich }) {
    ============================================================ */
 
 function HowItWorks() {
+  const isMobile = useIsMobile()
   const steps = [
     { n: '01', t: 'Sign in', d: 'Email or Google. 2 seconds.', code: 'HOW IT WORKS' },
     { n: '02', t: 'Set your goals', d: 'Weight, Calories + macros.', code: 'PUT /goals' },
@@ -1321,7 +1579,13 @@ function HowItWorks() {
     },
   ]
   return (
-    <section id="how-it-works" style={{ borderBottom: `1px solid ${TOKENS.line}`, padding: '96px 28px' }}>
+    <section
+      id="how-it-works"
+      style={{
+        borderBottom: `1px solid ${TOKENS.line}`,
+        padding: isMobile ? '56px 16px' : '96px 28px',
+      }}
+    >
       <div style={{ maxWidth: 1240, margin: '0 auto' }}>
         <SectionHeader
           kicker="HOW IT WORKS"
@@ -1337,50 +1601,61 @@ function HowItWorks() {
         />
         <div
           style={{
-            marginTop: 56,
+            marginTop: isMobile ? 32 : 56,
             display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)',
             border: `1px solid ${TOKENS.line2}`,
             borderRadius: 10,
             overflow: 'hidden',
           }}
         >
-          {steps.map((s, i) => (
-            <div
-              key={s.n}
-              style={{
-                padding: '28px 24px 32px',
-                borderRight:
-                  i < steps.length - 1 ? `1px solid ${TOKENS.line2}` : 'none',
-                background: i % 2 ? '#0b0b0b' : '#0d0d0d',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 14,
-                minHeight: 240,
-                position: 'relative',
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <MonoLabel color={TOKENS.accent}>{s.n}</MonoLabel>
-                {SHOW_DIAGNOSTICS && <MonoLabel>{s.code}</MonoLabel>}
-              </div>
+          {steps.map((s, i) => {
+            const isLast = i === steps.length - 1
+            return (
               <div
+                key={s.n}
                 style={{
-                  fontSize: 22,
-                  letterSpacing: '-0.02em',
-                  color: '#f0f0f0',
-                  fontWeight: 500,
+                  padding: isMobile ? '22px 20px 24px' : '28px 24px 32px',
+                  borderRight:
+                    !isMobile && !isLast ? `1px solid ${TOKENS.line2}` : 'none',
+                  borderBottom:
+                    isMobile && !isLast ? `1px solid ${TOKENS.line2}` : 'none',
+                  background: i % 2 ? '#0b0b0b' : '#0d0d0d',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: isMobile ? 10 : 14,
+                  minHeight: isMobile ? 'auto' : 240,
+                  position: 'relative',
                 }}
               >
-                {s.t}
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <MonoLabel color={TOKENS.accent}>{s.n}</MonoLabel>
+                  {SHOW_DIAGNOSTICS && <MonoLabel>{s.code}</MonoLabel>}
+                </div>
+                <div
+                  style={{
+                    fontSize: isMobile ? 18 : 22,
+                    letterSpacing: '-0.02em',
+                    color: '#f0f0f0',
+                    fontWeight: 500,
+                  }}
+                >
+                  {s.t}
+                </div>
+                <div
+                  style={{
+                    fontSize: isMobile ? 13 : 13.5,
+                    color: TOKENS.muted,
+                    lineHeight: 1.55,
+                  }}
+                >
+                  {s.d}
+                </div>
+                <div style={{ flex: 1 }} />
+                <StepVisual n={i} />
               </div>
-              <div style={{ fontSize: 13.5, color: TOKENS.muted, lineHeight: 1.55 }}>
-                {s.d}
-              </div>
-              <div style={{ flex: 1 }} />
-              <StepVisual n={i} />
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>
@@ -1438,11 +1713,12 @@ function StepVisual({ n }) {
    ============================================================ */
 
 function Capabilities() {
+  const isMobile = useIsMobile()
   return (
     <section
       style={{
         borderBottom: `1px solid ${TOKENS.line}`,
-        padding: '96px 28px',
+        padding: isMobile ? '56px 16px' : '96px 28px',
         background: '#0a0a0a',
       }}
     >
@@ -1463,10 +1739,10 @@ function Capabilities() {
 
         <div
           style={{
-            marginTop: 56,
+            marginTop: isMobile ? 32 : 56,
             display: 'grid',
-            gridTemplateColumns: '1.4fr 1fr 1fr',
-            gridTemplateRows: 'auto auto',
+            gridTemplateColumns: isMobile ? '1fr' : '1.4fr 1fr 1fr',
+            gridTemplateRows: isMobile ? 'auto' : 'auto auto',
             gap: 1,
             background: TOKENS.line2,
             border: `1px solid ${TOKENS.line2}`,
@@ -1475,7 +1751,7 @@ function Capabilities() {
           }}
         >
           <Cap
-            span={[1, 3]}
+            span={isMobile ? null : [1, 3]}
             title="AI Assistant that understands portions"
             body={
               <>
@@ -1485,27 +1761,32 @@ function Capabilities() {
               </>
             }
             right={<PortionDemo />}
-            wide
+            wide={!isMobile}
+            isMobile={isMobile}
           />
           <Cap
             title="Library that learns"
             body="Your regular foods get saved automatically. Over time the AI reaches for them first."
             right={<LibraryDemo />}
+            isMobile={isMobile}
           />
           <Cap
             title="Meal planning"
             body="Ask for tomorrow's lunch. Get a plan that hits your macros using foods you actually eat."
             right={<PlannerDemo />}
+            isMobile={isMobile}
           />
           <Cap
             title="History & trends"
             body="Your past 90 days in one place. Spot the streaks that worked."
             right={<TrendDemo />}
+            isMobile={isMobile}
           />
           <Cap
             title="Corrections, not re-typing"
             body={<>"Actually make that 150g not 200" — the AI finds the entry and updates it.</>}
             right={<FixDemo />}
+            isMobile={isMobile}
           />
         </div>
       </div>
@@ -1513,13 +1794,13 @@ function Capabilities() {
   )
 }
 
-function Cap({ title, body, right, span, wide }) {
+function Cap({ title, body, right, span, wide, isMobile }) {
   const style = {
     background: TOKENS.bg,
-    padding: wide ? '28px 32px' : '24px 24px',
+    padding: isMobile ? '20px 18px' : wide ? '28px 32px' : '24px 24px',
     display: 'grid',
-    gridTemplateColumns: wide ? '1fr 1.1fr' : '1fr',
-    gap: wide ? 28 : 16,
+    gridTemplateColumns: wide && !isMobile ? '1fr 1.1fr' : '1fr',
+    gap: isMobile ? 16 : wide ? 28 : 16,
     ...(span ? { gridColumn: `${span[0]} / span ${span[1]}` } : {}),
   }
   return (
@@ -1534,7 +1815,7 @@ function Cap({ title, body, right, span, wide }) {
       >
         <div
           style={{
-            fontSize: wide ? 22 : 16,
+            fontSize: isMobile ? 17 : wide ? 22 : 16,
             fontWeight: 500,
             letterSpacing: '-0.01em',
             color: '#f0f0f0',
@@ -1543,7 +1824,13 @@ function Cap({ title, body, right, span, wide }) {
         >
           {title}
         </div>
-        <div style={{ fontSize: wide ? 14.5 : 13, color: TOKENS.muted, lineHeight: 1.55 }}>
+        <div
+          style={{
+            fontSize: isMobile ? 13 : wide ? 14.5 : 13,
+            color: TOKENS.muted,
+            lineHeight: 1.55,
+          }}
+        >
           {body}
         </div>
       </div>
@@ -1832,13 +2119,20 @@ function FAQ() {
     },
   ]
   const [open, setOpen] = useState(0)
+  const isMobile = useIsMobile()
   return (
-    <section id="faq" style={{ borderBottom: `1px solid ${TOKENS.line}`, padding: '96px 28px' }}>
+    <section
+      id="faq"
+      style={{
+        borderBottom: `1px solid ${TOKENS.line}`,
+        padding: isMobile ? '56px 16px' : '96px 28px',
+      }}
+    >
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
         <SectionHeader kicker="FAQ" title="Questions, answered." align="left" />
         <div
           style={{
-            marginTop: 40,
+            marginTop: isMobile ? 28 : 40,
             border: `1px solid ${TOKENS.line2}`,
             borderRadius: 10,
             overflow: 'hidden',
@@ -1861,20 +2155,36 @@ function FAQ() {
                     textAlign: 'left',
                     background: 'transparent',
                     border: 'none',
-                    padding: '18px 22px',
+                    padding: isMobile ? '16px 16px' : '18px 22px',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
+                    gap: 12,
                     color: '#efefef',
                     cursor: 'pointer',
                     fontFamily: 'inherit',
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: isMobile ? 10 : 14,
+                      minWidth: 0,
+                    }}
+                  >
                     <MonoLabel color={isOpen ? TOKENS.accent : TOKENS.muted2}>
                       {String(i + 1).padStart(2, '0')}
                     </MonoLabel>
-                    <span style={{ fontSize: 16, fontWeight: 500 }}>{it.q}</span>
+                    <span
+                      style={{
+                        fontSize: isMobile ? 14.5 : 16,
+                        fontWeight: 500,
+                        lineHeight: 1.35,
+                      }}
+                    >
+                      {it.q}
+                    </span>
                   </div>
                   <span
                     className="mono"
@@ -1883,6 +2193,7 @@ function FAQ() {
                       color: TOKENS.muted,
                       transform: isOpen ? 'rotate(45deg)' : 'rotate(0)',
                       transition: 'transform .2s',
+                      flexShrink: 0,
                     }}
                   >
                     +
@@ -1891,9 +2202,9 @@ function FAQ() {
                 {isOpen && (
                   <div
                     style={{
-                      padding: '0 22px 20px 58px',
+                      padding: isMobile ? '0 16px 18px 44px' : '0 22px 20px 58px',
                       color: TOKENS.muted,
-                      fontSize: 14,
+                      fontSize: isMobile ? 13.5 : 14,
                       lineHeight: 1.6,
                     }}
                   >
@@ -1914,10 +2225,11 @@ function FAQ() {
    ============================================================ */
 
 function FinalCTA() {
+  const isMobile = useIsMobile()
   return (
     <section
       style={{
-        padding: '112px 28px',
+        padding: isMobile ? '72px 16px' : '112px 28px',
         borderBottom: `1px solid ${TOKENS.line}`,
         position: 'relative',
         overflow: 'hidden',
@@ -1959,7 +2271,7 @@ function FinalCTA() {
         <MonoLabel color={TOKENS.accent}>START NOW · FREE FOREVER TIER</MonoLabel>
         <h2
           style={{
-            fontSize: 'clamp(40px, 5vw, 68px)',
+            fontSize: isMobile ? 'clamp(32px, 9vw, 44px)' : 'clamp(40px, 5vw, 68px)',
             lineHeight: 1.02,
             letterSpacing: '-0.03em',
             fontWeight: 500,
@@ -1975,9 +2287,10 @@ function FinalCTA() {
         <p
           style={{
             color: TOKENS.muted,
-            fontSize: 17,
+            fontSize: isMobile ? 15 : 17,
             maxWidth: 520,
             margin: '0 auto 36px',
+            lineHeight: 1.55,
           }}
         >
           30 seconds to sign up. No credit card. Cancel with a command.
@@ -1988,10 +2301,10 @@ function FinalCTA() {
             style={{
               background: TOKENS.accent,
               color: '#0a0a0a',
-              padding: '15px 24px',
+              padding: isMobile ? '14px 20px' : '15px 24px',
               borderRadius: 5,
               fontFamily: 'DM Mono, monospace',
-              fontSize: 12,
+              fontSize: isMobile ? 11 : 12,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
               fontWeight: 500,
@@ -2011,24 +2324,30 @@ function FinalCTA() {
    ============================================================ */
 
 function Footer() {
+  const isMobile = useIsMobile()
   const cols = [
     { h: 'PRODUCT', l: ['Features', 'Pricing', 'Changelog', 'Roadmap'] },
     { h: 'COMPANY', l: ['About', 'Blog', 'Careers', 'Contact'] },
     { h: 'RESOURCES', l: ['Docs', 'API', 'Status', 'Privacy'] },
   ]
   return (
-    <footer style={{ padding: '56px 28px 32px', background: '#080808' }}>
+    <footer
+      style={{
+        padding: isMobile ? '40px 16px 24px' : '56px 28px 32px',
+        background: '#080808',
+      }}
+    >
       <div style={{ maxWidth: 1240, margin: '0 auto' }}>
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: '1.6fr repeat(3, 1fr)',
-            gap: 40,
-            paddingBottom: 40,
+            gridTemplateColumns: isMobile ? '1fr 1fr' : '1.6fr repeat(3, 1fr)',
+            gap: isMobile ? 28 : 40,
+            paddingBottom: isMobile ? 28 : 40,
             borderBottom: `1px solid ${TOKENS.line2}`,
           }}
         >
-          <div>
+          <div style={{ gridColumn: isMobile ? '1 / -1' : 'auto' }}>
             <Logo size={14} />
             <p
               style={{
@@ -2090,7 +2409,14 @@ export default function LandingPage() {
   // if (!loading && session) return <Navigate to="/app" replace />
 
   return (
-    <div style={{ background: TOKENS.bg, color: TOKENS.text, minHeight: '100vh' }}>
+    <div
+      style={{
+        background: TOKENS.bg,
+        color: TOKENS.text,
+        minHeight: '100vh',
+        overflowX: 'hidden',
+      }}
+    >
       <Nav />
       <Hero />
       <TrustBand />

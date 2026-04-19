@@ -1,18 +1,25 @@
 import { useState } from 'react'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 const S = {
   card: { background: '#161616', border: '1px solid #2a2a2a', borderRadius: 10, padding: '14px 16px', marginBottom: '1rem' },
-  metricGrid: { display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8, marginBottom: '1rem' },
   metric: { background: '#161616', border: '1px solid #2a2a2a', borderRadius: 10, padding: '12px 10px' },
   label: { fontSize: 10, color: '#666', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 5 },
   val: { fontFamily: 'DM Mono, monospace', fontSize: 20, fontWeight: 500 },
   sub: { fontSize: 10, color: '#666', marginTop: 3, fontFamily: 'DM Mono, monospace' },
   barTrack: { background: '#2a2a2a', borderRadius: 2, height: 4 },
-  mealHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#161616', border: '1px solid #2a2a2a', borderRadius: '8px 8px 0 0', borderBottom: 'none' },
-  foodItem: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: '#161616', border: '1px solid #2a2a2a', borderTop: 'none' },
+  mealHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#161616', border: '1px solid #2a2a2a', borderRadius: '8px 8px 0 0', borderBottom: 'none', gap: 8 },
+  foodItem: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: '#161616', border: '1px solid #2a2a2a', borderTop: 'none', gap: 10 },
 }
 
 export default function LogTab({ goals, todayLog, library, addLogEntry, removeLogEntry }) {
+  const isMobile = useIsMobile()
+  const metricGrid = {
+    display: 'grid',
+    gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+    gap: 8,
+    marginBottom: '1rem',
+  }
   const [meal, setMeal] = useState('Lunch')
   const [selectedFood, setSelectedFood] = useState('')
   const [qty, setQty] = useState(1)
@@ -55,7 +62,7 @@ export default function LogTab({ goals, todayLog, library, addLogEntry, removeLo
   return (
     <div>
       {/* Metrics */}
-      <div style={S.metricGrid}>
+      <div style={metricGrid}>
         {[
           { label: 'Calories', val: Math.round(tot.cal), sub: `/ ${goals.cal}`, over: over },
           { label: 'Protein', val: Math.round(tot.pro)+'g', sub: `/ ${goals.pro}g`, over: tot.pro > goals.pro },
@@ -119,13 +126,13 @@ export default function LogTab({ goals, todayLog, library, addLogEntry, removeLo
             </div>
             {entries.map((e, i) => (
               <div key={e.id} style={{ ...S.foodItem, borderRadius: i === entries.length-1 ? '0 0 8px 8px' : 0 }}>
-                <div>
-                  <div style={{ fontSize: 13 }}>{e.qty > 1 ? `${e.qty}× ` : ''}{e.name}</div>
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div style={{ fontSize: 13, overflowWrap: 'anywhere' }}>{e.qty > 1 ? `${e.qty}× ` : ''}{e.name}</div>
                   <div style={{ fontSize: 11, color: '#666', marginTop: 2, fontFamily: 'DM Mono, monospace' }}>P:{e.pro}g C:{e.carb}g F:{e.fat}g</div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
                   <span style={{ fontFamily: 'DM Mono, monospace', fontSize: 13 }}>{Math.round(e.cal)}</span>
-                  <button onClick={() => removeLogEntry(e.id)} style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', fontSize: 18, lineHeight: 1, padding: '0 2px' }} onMouseOver={e => e.target.style.color='#ff5f5f'} onMouseOut={e => e.target.style.color='#666'}>×</button>
+                  <button onClick={() => removeLogEntry(e.id)} style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', fontSize: 20, lineHeight: 1, padding: '4px 6px' }} onMouseOver={e => e.target.style.color='#ff5f5f'} onMouseOut={e => e.target.style.color='#666'}>×</button>
                 </div>
               </div>
             ))}

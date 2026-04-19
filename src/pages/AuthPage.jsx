@@ -47,7 +47,7 @@ export default function AuthPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen px-4" style={{ background: '#0e0e0e' }}>
-      <div style={{ background: '#161616', border: '1px solid #2a2a2a', borderRadius: 16, padding: '2.5rem', width: '100%', maxWidth: 400 }}>
+      <div className="auth-card" style={{ background: '#161616', border: '1px solid #2a2a2a', borderRadius: 16, padding: '2.5rem', width: '100%', maxWidth: 400 }}>
 
         {/* Logo */}
         <Link to="/">
