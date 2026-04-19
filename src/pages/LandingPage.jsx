@@ -2390,7 +2390,15 @@ function Footer() {
         >
           <MonoLabel>© 2026 MACRO.AI · ALL RIGHTS RESERVED</MonoLabel>
           <MonoLabel>
-            MADE WITH <span style={{ color: '#ff5c7a' }}>♥</span>
+            MADE WITH <span style={{ color: '#ff5c7a' }}>♥</span> BY{' '}
+            <a
+              href="https://github.com/esiebomaj"
+              target="_blank"
+              rel="noreferrer"
+              style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: 2 }}
+            >
+              JEREMIAH
+            </a>
           </MonoLabel>
         </div>
       </div>
