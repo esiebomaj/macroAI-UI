@@ -180,7 +180,7 @@ function Nav() {
                 whiteSpace: 'nowrap',
               }}
             >
-              Start free
+              Start Tracking
             </Link>
             <button
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
@@ -260,7 +260,7 @@ function Nav() {
                 textDecoration: 'none',
               }}
             >
-              Start free →
+              Start Tracking →
             </Link>
           </div>
         )}
@@ -324,7 +324,7 @@ function Nav() {
    ============================================================ */
 
 const DEMO_SCRIPT = [
-  { kind: 'system', text: "Hey — tell me what you ate and I'll log it." },
+  { kind: 'system', text: "Hey, tell me what you ate and I'll log it." },
   { kind: 'user', text: '2 eggs, a banana and greek yogurt for breakfast' },
   { kind: 'ai-thinking' },
   {
@@ -639,8 +639,8 @@ function HeroChat() {
 
 const HEADLINE = {
   pre: 'MACRO TRACKING · AI-POWERED',
-  main: ['Track your ', 'macros', ',', ' achieve your goals with AI.'],
-  sub: "Skip the barcode scans and 14-screen food entry. Just tell Macro.AI what you ate — and let it keep you on target.",
+  main: ['Track your food ', 'macros', ',', ' achieve your goals using AI.'],
+  sub: "Are you looking to lose weight, be fit, build muscle, or just take back control of what you eat? Macro.AI makes it effortless.",
 }
 
 function Hero() {
@@ -693,7 +693,7 @@ function Hero() {
             <Dot color={TOKENS.accent} style={{ animation: 'pulse 2s infinite' }} />
             <MonoLabel color={TOKENS.accent}>{HEADLINE.pre}</MonoLabel>
             {!isMobile && <Hairline style={{ flex: 1, maxWidth: 120 }} />}
-            {!isMobile && <MonoLabel>v2.0 · live</MonoLabel>}
+            {!isMobile && <MonoLabel>v1.0 · live</MonoLabel>}
           </div>
 
           <h1
@@ -819,9 +819,9 @@ function StatsFloat() {
 
 function MacroPills() {
   const macros = [
-    { k: 'P', v: 166, goal: 160, c: TOKENS.protein },
-    { k: 'C', v: 136, goal: 180, c: TOKENS.carbs },
-    { k: 'F', v: 82, goal: 71, c: TOKENS.fat },
+    { k: 'Protein', v: 166, goal: 160, c: TOKENS.protein },
+    { k: 'Carbs', v: 136, goal: 180, c: TOKENS.carbs },
+    { k: 'Fat', v: 82, goal: 71, c: TOKENS.fat },
   ]
   return (
     <div style={{ display: 'flex', gap: 10 }}>
@@ -833,7 +833,7 @@ function MacroPills() {
             style={{ display: 'flex', flexDirection: 'column', gap: 3, minWidth: 44 }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <MonoLabel color={m.c}>{m.k}</MonoLabel>
+              <MonoLabel style={{ marginRight: 4 }} color={m.c}>{m.k + ' '} </MonoLabel>
               <MonoLabel>{m.v}g</MonoLabel>
             </div>
             <div style={{ height: 3, background: '#1a1a1a', borderRadius: 2 }}>
@@ -855,12 +855,12 @@ function MacroPills() {
 function TrustBand() {
   const isMobile = useIsMobile()
   const items = [
-    'GPT-4o class model',
-    'Supabase Auth',
-    'Row-level security',
-    'Growing food library',
-    'Export to CSV',
-    'iOS / Android',
+    'loose weight',
+    'build muscle',
+    'Stay fit',
+    'Stay healthy',
+    'Cut fat',
+    'Stay in a deficit',
   ]
   return (
     <section style={{ borderBottom: `1px solid ${TOKENS.line}`, background: '#0c0c0c' }}>
@@ -877,7 +877,7 @@ function TrustBand() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <MonoLabel style={{ whiteSpace: 'nowrap' }}>BUILT ON</MonoLabel>
+          <MonoLabel style={{ whiteSpace: 'nowrap' }}>HELPS YOU</MonoLabel>
           <Hairline style={{ width: 20, flexShrink: 0 }} />
         </div>
         <div
@@ -1218,7 +1218,7 @@ function AppPreview() {
             {
               k: '03',
               t: 'Track your Goals',
-              d: 'Weight, Calories, protein, carbs, fat — tuned weekly.',
+              d: 'Weight, Calories, protein, carbs, fat. Tuned weekly.',
             },
             { k: '04', t: 'History at a glance', d: '' },
           ].map((f) => (
@@ -1734,7 +1734,7 @@ function Capabilities() {
               .
             </>
           }
-          sub="It doesn't just parse text — it knows your library, your goals, and what you've already eaten today."
+          sub="It doesn't just parse text. It knows your library, your goals, and what you've already eaten today."
         />
 
         <div
@@ -1784,7 +1784,7 @@ function Capabilities() {
           />
           <Cap
             title="Corrections, not re-typing"
-            body={<>"Actually make that 150g not 200" — the AI finds the entry and updates it.</>}
+            body={<>"Actually make that 150g not 200". The AI finds the entry and updates it.</>}
             right={<FixDemo />}
             isMobile={isMobile}
           />
@@ -2106,7 +2106,7 @@ function FAQ() {
     },
     {
       q: 'What if the AI gets a portion wrong?',
-      a: 'Every AI-estimated entry is tagged. One-tap to correct — or just tell the assistant and it fixes itself.',
+      a: 'Every AI-estimated entry is tagged. One-tap to correct, or just tell the assistant and it fixes itself.',
     },
     {
       q: 'Does it work for cutting / bulking?',
@@ -2115,7 +2115,7 @@ function FAQ() {
     { q: 'Can I export my data?', a: 'CSV export from History. You own what you log.' },
     {
       q: 'Is there a mobile app?',
-      a: 'iOS and Android via the same account. Currently in private beta — join the waitlist below.',
+      a: 'iOS and Android via the same account. Currently in private beta. Join the waitlist below.',
     },
   ]
   const [open, setOpen] = useState(0)
