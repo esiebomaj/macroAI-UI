@@ -33,11 +33,11 @@ export default function DashboardPage() {
 
   const wrapperStyle = isMobile
     ? { display: 'flex', flexDirection: 'column', minHeight: '100dvh' }
-    : { display: 'grid', gridTemplateColumns: '1fr 340px', minHeight: '100vh', maxWidth: 1100, margin: '0 auto' }
+    : { display: 'grid', gridTemplateColumns: '1fr 340px', height: '100vh', maxWidth: 1100, margin: '0 auto', overflow: 'hidden' }
 
   const leftStyle = isMobile
     ? { padding: '1.1rem 1rem calc(6rem + env(safe-area-inset-bottom))', overflowY: 'auto', flex: 1 }
-    : { padding: '2rem', overflowY: 'auto', borderRight: '1px solid #2a2a2a' }
+    : { padding: '2rem', overflowY: 'auto', borderRight: '1px solid #2a2a2a', height: '100vh', minHeight: 0 }
 
   return (
     <div style={wrapperStyle}>
