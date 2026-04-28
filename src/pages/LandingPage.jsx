@@ -24,7 +24,6 @@ const TOKENS = {
 }
 
 const DEMO_SPEED = 1.2
-const SHOW_DIAGNOSTICS = true
 
 /* ============================================================
    Responsive hook
@@ -108,8 +107,8 @@ function Nav() {
   const [menuOpen, setMenuOpen] = useState(false)
 
   const links = [
-    { label: 'Product', link: '#product' },
-    { label: 'How it works', link: '#how-it-works' },
+    { label: 'AI Assistant', link: '#ai-assistant' },
+    { label: 'Food Library', link: '#food-library' },
     { label: 'FAQ', link: '#faq' },
   ]
 
@@ -849,62 +848,7 @@ function MacroPills() {
 }
 
 /* ============================================================
-   Trust band
-   ============================================================ */
-
-function TrustBand() {
-  const isMobile = useIsMobile()
-  const items = [
-    'loose weight',
-    'build muscle',
-    'Stay fit',
-    'Stay healthy',
-    'Cut fat',
-    'Stay in a deficit',
-  ]
-  return (
-    <section style={{ borderBottom: `1px solid ${TOKENS.line}`, background: '#0c0c0c' }}>
-      <div
-        style={{
-          maxWidth: 1240,
-          margin: '0 auto',
-          padding: isMobile ? '16px 16px' : '20px 28px',
-          display: 'flex',
-          alignItems: isMobile ? 'flex-start' : 'center',
-          flexDirection: isMobile ? 'column' : 'row',
-          gap: isMobile ? 10 : 28,
-          overflow: 'hidden',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <MonoLabel style={{ whiteSpace: 'nowrap' }}>HELPS YOU</MonoLabel>
-          <Hairline style={{ width: 20, flexShrink: 0 }} />
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            gap: isMobile ? 18 : 36,
-            flexWrap: 'wrap',
-            rowGap: isMobile ? 8 : 10,
-          }}
-        >
-          {items.map((x) => (
-            <span
-              key={x}
-              className="mono"
-              style={{ fontSize: 11, color: TOKENS.muted, letterSpacing: '0.08em' }}
-            >
-              {x}
-            </span>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ============================================================
-   Comparison
+   Section header
    ============================================================ */
 
 function SectionHeader({ kicker, title, sub, align = 'left' }) {
@@ -958,1135 +902,376 @@ function SectionHeader({ kicker, title, sub, align = 'left' }) {
   )
 }
 
-function ComparisonSection() {
-  const isMobile = useIsMobile()
-  return (
-    <section
-      style={{
-        borderBottom: `1px solid ${TOKENS.line}`,
-        padding: isMobile ? '56px 16px' : '96px 28px',
-      }}
-    >
-      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
-        <SectionHeader
-          kicker="THE PROBLEM"
-          title={
-            <>
-              Logging food in 2026 still{' '}
-              <span className="serif" style={{ color: TOKENS.accent }}>
-                sucks
-              </span>
-              .
-            </>
-          }
-          sub="Everyone quits their macro app at week two. It's not you, it's them."
-        />
-
-        <div
-          style={{
-            marginTop: isMobile ? 32 : 56,
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-            border: `1px solid ${TOKENS.line2}`,
-            borderRadius: 8,
-            overflow: 'hidden',
-          }}
-        >
-          <OldWay isMobile={isMobile} />
-          <NewWay isMobile={isMobile} />
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function OldWay({ isMobile }) {
-  const steps = [
-    'Open barcode scanner',
-    "Search 'chicken breast grilled'",
-    'Pick 1 of 47 near-duplicates',
-    'Guess the gram weight',
-    'Repeat for every side',
-    'Realise you forgot lunch',
-  ]
-  return (
-    <div
-      style={{
-        padding: isMobile ? '22px 20px 24px' : '28px 28px 32px',
-        borderRight: isMobile ? 'none' : `1px solid ${TOKENS.line2}`,
-        borderBottom: isMobile ? `1px solid ${TOKENS.line2}` : 'none',
-        background: '#0b0b0b',
-      }}
-    >
-      <MonoLabel color="#ff6b5c" style={{ marginBottom: 14, display: 'block' }}>
-        OTHER APPS
-      </MonoLabel>
-      <h3 style={{ fontSize: 22, letterSpacing: '-0.02em', marginBottom: 22, fontWeight: 500 }}>
-        14 taps to log a chicken wrap.
-      </h3>
-      <ol style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {steps.map((s, i) => (
-          <li
-            key={i}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-              color: TOKENS.muted,
-              fontSize: 14,
-            }}
-          >
-            <span
-              className="mono"
-              style={{ fontSize: 10, color: '#444', width: 22, textAlign: 'right' }}
-            >
-              {String(i + 1).padStart(2, '0')}
-            </span>
-            <span
-              style={{ textDecoration: 'line-through', textDecorationColor: '#333' }}
-            >
-              {s}
-            </span>
-          </li>
-        ))}
-      </ol>
-    </div>
-  )
-}
-
-function NewWay({ isMobile }) {
-  return (
-    <div
-      style={{
-        padding: isMobile ? '22px 20px 24px' : '28px 28px 32px',
-        background: '#0d0f09',
-      }}
-    >
-      <MonoLabel color={TOKENS.accent} style={{ marginBottom: 14, display: 'block' }}>
-        MACRO.AI
-      </MonoLabel>
-      <h3 style={{ fontSize: 22, letterSpacing: '-0.02em', marginBottom: 22, fontWeight: 500 }}>
-        Say it. Done.
-      </h3>
-      <div
-        style={{
-          border: `1px solid ${TOKENS.line2}`,
-          borderRadius: 6,
-          padding: '11px 13px',
-          background: '#1a1a1a',
-          fontSize: 14,
-          marginBottom: 14,
-          color: '#ededed',
-        }}
-      >
-        chicken wrap with extra avocado, side of slaw
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-        <Dot color={TOKENS.accent} />
-        <span style={{ fontSize: 13, color: TOKENS.muted }}>
-          Parsed. 3 items. 2 from library, 1 estimated.
-        </span>
-      </div>
-      <div
-        style={{
-          display: 'grid',
-          gap: 0,
-          border: '1px solid #1f2a10',
-          borderRadius: 6,
-          overflow: 'hidden',
-        }}
-      >
-        {[
-          { n: 'Chicken wrap', k: 520, p: 38 },
-          { n: 'Avocado +½', k: 120, p: 1 },
-          { n: 'Cabbage slaw', k: 95, p: 2 },
-        ].map((f, i) => (
-          <div
-            key={i}
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: '8px 12px',
-              borderBottom: i < 2 ? '1px solid #16200c' : 'none',
-              background: i % 2 ? 'transparent' : '#0b1006',
-            }}
-          >
-            <span style={{ fontSize: 13 }}>{f.n}</span>
-            <div style={{ display: 'flex', gap: 14 }}>
-              <span className="mono" style={{ fontSize: 11, color: TOKENS.muted }}>
-                {f.p}g P
-              </span>
-              <span className="mono" style={{ fontSize: 11 }}>
-                {f.k}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 /* ============================================================
-   Product preview
+   AI Assistant feature section
    ============================================================ */
 
-function AppPreview() {
+const ASSISTANT_PREVIEW_STEPS = [
+  { kind: 'user', text: '2 eggs on toast and a black coffee for breakfast' },
+  {
+    kind: 'ai',
+    text: 'Logged breakfast ↓',
+    foods: [
+      { name: '2× Large egg', P: 13, C: 0.8, F: 10, kcal: 150 },
+      { name: 'Toast (2 slices)', P: 6, C: 28, F: 2, kcal: 160 },
+      { name: 'Black coffee', P: 0, C: 0, F: 0, kcal: 5 },
+    ],
+    total: { kcal: 315, P: 19, C: 28.8, F: 12 },
+  },
+]
+
+function AssistantPreview() {
   const isMobile = useIsMobile()
   return (
-    <section
-      id="product"
-      style={{
-        borderBottom: `1px solid ${TOKENS.line}`,
-        padding: isMobile ? '56px 16px' : '96px 28px',
-        background: '#0a0a0a',
-      }}
-    >
-      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
-        <SectionHeader
-          kicker="THE PRODUCT"
-          title={<>Everything you need.</>}
-          sub="Log, Food Library, History, Goals and an AI assistant docked on the right."
-        />
-
-        <div
-          style={{
-            marginTop: isMobile ? 32 : 56,
-            border: `1px solid ${TOKENS.line2}`,
-            borderRadius: 10,
-            overflow: 'hidden',
-            background: '#0c0c0c',
-            boxShadow:
-              '0 60px 120px -60px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,0.015) inset',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '10px 14px',
-              borderBottom: `1px solid ${TOKENS.line2}`,
-              background: '#0a0a0a',
-            }}
-          >
-            <Dot color="#333" size={9} />
-            <Dot color="#2a2a2a" size={9} />
-            <Dot color="#2a2a2a" size={9} />
-            <div
-              style={{
-                flex: 1,
-                textAlign: 'center',
-                fontSize: 11,
-                color: TOKENS.muted2,
-                fontFamily: 'DM Mono, monospace',
-                letterSpacing: '0.05em',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              app.macro.ai / dashboard
-            </div>
-            {!isMobile && <div style={{ width: 70 }} />}
-          </div>
-
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: isMobile ? '1fr' : '1fr 360px',
-              minHeight: isMobile ? 'auto' : 560,
-            }}
-          >
-            <AppLogTab isMobile={isMobile} />
-            <AppChat isMobile={isMobile} />
-          </div>
-        </div>
-
-        <div
-          style={{
-            marginTop: isMobile ? 28 : 40,
-            display: 'grid',
-            gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
-            gap: isMobile ? 18 : 24,
-          }}
-        >
-          {[
-            { k: '01', t: 'Talk, don\u2019t tap', d: '"2 eggs and oats" is enough.' },
-            { k: '02', t: 'Your personal library', d: 'Save favourites once. Reuse forever.' },
-            {
-              k: '03',
-              t: 'Track your Goals',
-              d: 'Weight, Calories, protein, carbs, fat. Tuned weekly.',
-            },
-            { k: '04', t: 'History at a glance', d: '' },
-          ].map((f) => (
-            <div key={f.k} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <MonoLabel color={TOKENS.accent}>{f.k}</MonoLabel>
-                <Hairline style={{ flex: 1 }} />
-              </div>
-              <div style={{ fontSize: isMobile ? 14 : 16, color: '#e6e6e6', fontWeight: 500 }}>
-                {f.t}
-              </div>
-              <div
-                style={{
-                  fontSize: isMobile ? 12.5 : 13.5,
-                  color: TOKENS.muted,
-                  lineHeight: 1.55,
-                }}
-              >
-                {f.d}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function AppLogTab({ isMobile }) {
-  return (
     <div
       style={{
-        padding: isMobile ? '18px 16px' : '22px 26px',
-        borderRight: isMobile ? 'none' : `1px solid ${TOKENS.line2}`,
-        borderBottom: isMobile ? `1px solid ${TOKENS.line2}` : 'none',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: isMobile ? 14 : 18,
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: 10,
-        }}
-      >
-        <Logo size={12} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          {!isMobile && <MonoLabel>you@macro.ai</MonoLabel>}
-          <div
-            style={{
-              border: `1px solid ${TOKENS.line2}`,
-              borderRadius: 4,
-              padding: '4px 10px',
-            }}
-          >
-            <MonoLabel>Sign out</MonoLabel>
-          </div>
-        </div>
-      </div>
-
-      <div
-        style={{
-          display: 'flex',
-          borderBottom: `1px solid ${TOKENS.line2}`,
-          overflowX: 'auto',
-          scrollbarWidth: 'none',
-        }}
-      >
-        {['Log', 'Library', 'History', 'Goals'].map((t, i) => (
-          <div
-            key={t}
-            style={{
-              padding: isMobile ? '8px 14px' : '8px 18px',
-              borderBottom: i === 0 ? `2px solid ${TOKENS.accent}` : '2px solid transparent',
-              marginBottom: -1,
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <span
-              className="mono"
-              style={{
-                fontSize: 11,
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                color: i === 0 ? '#fff' : TOKENS.muted2,
-                fontWeight: i === 0 ? 500 : 400,
-              }}
-            >
-              {t}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
-          gap: isMobile ? 8 : 12,
-        }}
-      >
-        {[
-          { k: 'CALORIES', v: 1959, g: 2000, c: '#e8e8e8' },
-          { k: 'PROTEIN', v: 166, g: 160, c: TOKENS.protein, unit: 'g' },
-          { k: 'CARBS', v: 136, g: 180, c: TOKENS.carbs, unit: 'g' },
-          { k: 'FAT', v: 82, g: 71, c: TOKENS.fat, unit: 'g' },
-        ].map((m) => {
-          const pct = Math.min(100, (m.v / m.g) * 100)
-          return (
-            <div
-              key={m.k}
-              style={{
-                border: `1px solid ${TOKENS.line2}`,
-                borderRadius: 6,
-                padding: '10px 12px',
-                background: '#0d0d0d',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 6,
-              }}
-            >
-              <MonoLabel color={m.c === '#e8e8e8' ? TOKENS.muted2 : m.c}>{m.k}</MonoLabel>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-                <span className="mono" style={{ fontSize: 22, color: '#fff', fontWeight: 500 }}>
-                  {m.v}
-                </span>
-                <span className="mono" style={{ fontSize: 10, color: TOKENS.muted2 }}>
-                  /{m.g}
-                  {m.unit || ''}
-                </span>
-              </div>
-              <div style={{ height: 2, background: '#1a1a1a' }}>
-                <div style={{ height: 2, width: `${pct}%`, background: m.c }} />
-              </div>
-            </div>
-          )
-        })}
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <Meal
-          name="LUNCH"
-          kcal={839}
-          p={86}
-          isMobile={isMobile}
-          items={[
-            { n: '3× Large carrot', p: 1.8, c: 18, f: 0.3, k: 75 },
-            { n: '2× Chicken breast', p: 62, c: 0, f: 7.2, k: 330 },
-            { n: 'Medium avocado', p: 3, c: 12, f: 22, k: 240 },
-            { n: 'Cabbage (¼ head)', p: 2, c: 10, f: 0.2, k: 44 },
-            { n: 'Greek yogurt', p: 17, c: 6, f: 5, k: 150 },
-          ]}
-        />
-        <Meal
-          name="DINNER"
-          kcal={1120}
-          p={80}
-          isMobile={isMobile}
-          items={[
-            { n: '5× Large egg', p: 32.5, c: 2, f: 25, k: 375 },
-            { n: 'Protein drink', p: 35, c: 23, f: 17, k: 400 },
-            { n: '5× Bread slice', p: 12.5, c: 65, f: 5, k: 345 },
-          ]}
-        />
-      </div>
-    </div>
-  )
-}
-
-function Meal({ name, kcal, p, items, isMobile }) {
-  return (
-    <div
-      style={{
+        background: TOKENS.bg1,
         border: `1px solid ${TOKENS.line2}`,
-        borderRadius: 6,
-        background: '#0d0d0d',
+        borderRadius: 8,
         overflow: 'hidden',
+        boxShadow: '0 40px 80px -40px rgba(200,240,102,0.06)',
       }}
     >
       <div
         style={{
-          padding: '9px 14px',
           display: 'flex',
-          justifyContent: 'space-between',
           alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '11px 14px',
           borderBottom: `1px solid ${TOKENS.line2}`,
-          background: '#0a0a0a',
+          background: '#0c0c0c',
         }}
       >
-        <MonoLabel color="#fff">{name}</MonoLabel>
-        <MonoLabel>
-          {kcal} kcal · {p}g P
-        </MonoLabel>
-      </div>
-      {items.map((it, i) => (
-        <div
-          key={i}
-          style={{
-            padding: isMobile ? '7px 12px' : '7px 14px',
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr auto auto' : '1fr auto auto auto',
-            alignItems: 'center',
-            gap: isMobile ? 8 : 10,
-            borderBottom: i < items.length - 1 ? '1px solid #161616' : 'none',
-            fontSize: 13,
-          }}
-        >
-          <span
-            style={{
-              color: '#dcdcdc',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {it.n}
-          </span>
-          {!isMobile && (
-            <span className="mono" style={{ fontSize: 10, color: TOKENS.muted }}>
-              P:{it.p}g C:{it.c}g F:{it.f}g
-            </span>
-          )}
-          {isMobile && (
-            <span className="mono" style={{ fontSize: 10, color: TOKENS.muted }}>
-              {it.p}g P
-            </span>
-          )}
-          <span className="mono" style={{ fontSize: 11, minWidth: 40, textAlign: 'right' }}>
-            {it.k}
-          </span>
-          {!isMobile && <span style={{ color: '#333', fontSize: 12 }}>×</span>}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Dot color={TOKENS.accent} size={6} style={{ animation: 'pulse 1.8s infinite' }} />
+          <MonoLabel color="#fff">AI ASSISTANT</MonoLabel>
         </div>
-      ))}
-    </div>
-  )
-}
-
-function AppChat({ isMobile }) {
-  return (
-    <div
-      style={{
-        padding: isMobile ? '18px 16px' : '22px 20px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 10,
-        background: '#0a0a0a',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-        <Dot color={TOKENS.accent} size={6} style={{ animation: 'pulse 1.8s infinite' }} />
-        <MonoLabel color="#fff">AI ASSISTANT</MonoLabel>
+        <MonoLabel>chat</MonoLabel>
       </div>
+
       <div
         style={{
-          padding: '10px 12px',
-          border: `1px dashed ${TOKENS.line2}`,
-          borderRadius: 6,
-          fontSize: 13,
-          color: TOKENS.muted,
-          lineHeight: 1.6,
-        }}
-      >
-        Hey! Tell me what you ate and I'll log it straight to your account.
-      </div>
-      <ChatMsg side="user">add 2 banana as snacks</ChatMsg>
-      <ChatMsg side="ai">2 bananas added to snacks ↓</ChatMsg>
-      <ChatMsg side="user">draft lunch + dinner for tomorrow hitting my goals</ChatMsg>
-      <ChatMsg side="ai" rich>
-        <div style={{ fontSize: 13, color: '#dcdcdc', lineHeight: 1.6 }}>
-          Two meals that keep you at{' '}
-          <b style={{ color: TOKENS.accent }}>2,000 kcal</b> / 160g P:
-        </div>
-        <div style={{ marginTop: 8, fontSize: 12, color: TOKENS.muted }}>
-          <div>LUNCH · chicken breast 200g · rice 100g · cabbage ¼</div>
-          <div>DINNER · 3 eggs · protein drink · bread ×3</div>
-        </div>
-      </ChatMsg>
-
-      <div style={{ flex: 1 }} />
-      <div
-        style={{
-          marginTop: 8,
-          display: 'flex',
-          gap: 8,
-          border: `1px solid ${TOKENS.line2}`,
-          borderRadius: 6,
-          padding: '8px 10px',
-        }}
-      >
-        <span className="mono" style={{ color: TOKENS.muted2, fontSize: 12 }}>
-          ›
-        </span>
-        <span style={{ color: TOKENS.muted2, fontSize: 13 }}>Ask about your day…</span>
-      </div>
-    </div>
-  )
-}
-
-function ChatMsg({ side, children, rich }) {
-  if (side === 'user') {
-    return (
-      <div
-        style={{
-          alignSelf: 'flex-end',
-          maxWidth: '90%',
-          background: '#1a1a1a',
-          border: `1px solid ${TOKENS.line2}`,
-          padding: '8px 11px',
-          borderRadius: 6,
-          fontSize: 13,
-        }}
-      >
-        {children}
-      </div>
-    )
-  }
-  return (
-    <div
-      style={{
-        alignSelf: 'flex-start',
-        maxWidth: '95%',
-        background: '#0f140a',
-        border: '1px solid #2a3a14',
-        padding: rich ? '10px 12px' : '8px 11px',
-        borderRadius: 6,
-        fontSize: 13,
-        color: '#dcdcdc',
-      }}
-    >
-      {children}
-    </div>
-  )
-}
-
-/* ============================================================
-   How It Works
-   ============================================================ */
-
-function HowItWorks() {
-  const isMobile = useIsMobile()
-  const steps = [
-    { n: '01', t: 'Sign in', d: 'Email or Google. 2 seconds.', code: 'HOW IT WORKS' },
-    { n: '02', t: 'Set your goals', d: 'Weight, Calories + macros.', code: 'PUT /goals' },
-    {
-      n: '03',
-      t: 'Talk to the assistant',
-      d: '"Had oatmeal and a protein shake". Done.',
-      code: 'POST /chat',
-    },
-    {
-      n: '04',
-      t: 'Review + tweak',
-      d: 'Confirm portions. Edit a number. Or tell the AI to fix it.',
-      code: 'PATCH /log/:id',
-    },
-  ]
-  return (
-    <section
-      id="how-it-works"
-      style={{
-        borderBottom: `1px solid ${TOKENS.line}`,
-        padding: isMobile ? '56px 16px' : '96px 28px',
-      }}
-    >
-      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
-        <SectionHeader
-          kicker="HOW IT WORKS"
-          title={
-            <>
-              Four steps from signup to{' '}
-              <span className="serif" style={{ color: TOKENS.accent }}>
-                logged
-              </span>
-              .
-            </>
-          }
-        />
-        <div
-          style={{
-            marginTop: isMobile ? 32 : 56,
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)',
-            border: `1px solid ${TOKENS.line2}`,
-            borderRadius: 10,
-            overflow: 'hidden',
-          }}
-        >
-          {steps.map((s, i) => {
-            const isLast = i === steps.length - 1
-            return (
-              <div
-                key={s.n}
-                style={{
-                  padding: isMobile ? '22px 20px 24px' : '28px 24px 32px',
-                  borderRight:
-                    !isMobile && !isLast ? `1px solid ${TOKENS.line2}` : 'none',
-                  borderBottom:
-                    isMobile && !isLast ? `1px solid ${TOKENS.line2}` : 'none',
-                  background: i % 2 ? '#0b0b0b' : '#0d0d0d',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: isMobile ? 10 : 14,
-                  minHeight: isMobile ? 'auto' : 240,
-                  position: 'relative',
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <MonoLabel color={TOKENS.accent}>{s.n}</MonoLabel>
-                  {SHOW_DIAGNOSTICS && <MonoLabel>{s.code}</MonoLabel>}
-                </div>
-                <div
-                  style={{
-                    fontSize: isMobile ? 18 : 22,
-                    letterSpacing: '-0.02em',
-                    color: '#f0f0f0',
-                    fontWeight: 500,
-                  }}
-                >
-                  {s.t}
-                </div>
-                <div
-                  style={{
-                    fontSize: isMobile ? 13 : 13.5,
-                    color: TOKENS.muted,
-                    lineHeight: 1.55,
-                  }}
-                >
-                  {s.d}
-                </div>
-                <div style={{ flex: 1 }} />
-                <StepVisual n={i} />
-              </div>
-            )
-          })}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function StepVisual({ n }) {
-  const common = {
-    height: 78,
-    border: `1px solid ${TOKENS.line2}`,
-    borderRadius: 6,
-    padding: 10,
-    fontSize: 11,
-    background: '#080808',
-    fontFamily: 'DM Mono, monospace',
-    color: TOKENS.muted,
-    overflow: 'hidden',
-    position: 'relative',
-  }
-  if (n === 0)
-    return (
-      <div style={common}>
-        <div>› email: you@macro.ai</div>
-        <div>› oauth: google ✓</div>
-        <div style={{ color: TOKENS.accent }}>› session opened</div>
-      </div>
-    )
-  if (n === 1)
-    return (
-      <div style={common}>
-        <div>calories .... 2000</div>
-        <div>protein ..... 160g</div>
-        <div>carbs ....... 180g</div>
-        <div>fat ......... 71g</div>
-      </div>
-    )
-  if (n === 2)
-    return (
-      <div style={common}>
-        <div>you: oatmeal + protein shake</div>
-        <div style={{ color: TOKENS.accent }}>ai: ✓ logged 2 items, 420 kcal</div>
-      </div>
-    )
-  return (
-    <div style={common}>
-      <div>was: bread × 5</div>
-      <div style={{ color: TOKENS.accent }}>now: bread × 3</div>
-      <div>Δ kcal: −138</div>
-    </div>
-  )
-}
-
-/* ============================================================
-   Capabilities
-   ============================================================ */
-
-function Capabilities() {
-  const isMobile = useIsMobile()
-  return (
-    <section
-      style={{
-        borderBottom: `1px solid ${TOKENS.line}`,
-        padding: isMobile ? '56px 16px' : '96px 28px',
-        background: '#0a0a0a',
-      }}
-    >
-      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
-        <SectionHeader
-          kicker="WHAT IT CAN DO"
-          title={
-            <>
-              An assistant that actually understands{' '}
-              <span className="serif" style={{ color: TOKENS.accent }}>
-                food
-              </span>
-              .
-            </>
-          }
-          sub="It doesn't just parse text. It knows your library, your goals, and what you've already eaten today."
-        />
-
-        <div
-          style={{
-            marginTop: isMobile ? 32 : 56,
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : '1.4fr 1fr 1fr',
-            gridTemplateRows: isMobile ? 'auto' : 'auto auto',
-            gap: 1,
-            background: TOKENS.line2,
-            border: `1px solid ${TOKENS.line2}`,
-            borderRadius: 10,
-            overflow: 'hidden',
-          }}
-        >
-          <Cap
-            span={isMobile ? null : [1, 3]}
-            title="AI Assistant that understands portions"
-            body={
-              <>
-                "Half a cup of rice and a palm-sized salmon" gets portioned correctly, with
-                reasonable estimates when you don't specify. Every estimate is marked and you
-                can correct it.
-              </>
-            }
-            right={<PortionDemo />}
-            wide={!isMobile}
-            isMobile={isMobile}
-          />
-          <Cap
-            title="Library that learns"
-            body="Your regular foods get saved automatically. Over time the AI reaches for them first."
-            right={<LibraryDemo />}
-            isMobile={isMobile}
-          />
-          <Cap
-            title="Meal planning"
-            body="Ask for tomorrow's lunch. Get a plan that hits your macros using foods you actually eat."
-            right={<PlannerDemo />}
-            isMobile={isMobile}
-          />
-          <Cap
-            title="History & trends"
-            body="Your past 90 days in one place. Spot the streaks that worked."
-            right={<TrendDemo />}
-            isMobile={isMobile}
-          />
-          <Cap
-            title="Corrections, not re-typing"
-            body={<>"Actually make that 150g not 200". The AI finds the entry and updates it.</>}
-            right={<FixDemo />}
-            isMobile={isMobile}
-          />
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function Cap({ title, body, right, span, wide, isMobile }) {
-  const style = {
-    background: TOKENS.bg,
-    padding: isMobile ? '20px 18px' : wide ? '28px 32px' : '24px 24px',
-    display: 'grid',
-    gridTemplateColumns: wide && !isMobile ? '1fr 1.1fr' : '1fr',
-    gap: isMobile ? 16 : wide ? 28 : 16,
-    ...(span ? { gridColumn: `${span[0]} / span ${span[1]}` } : {}),
-  }
-  return (
-    <div style={style}>
-      <div
-        style={{
+          padding: isMobile ? '14px' : '18px',
           display: 'flex',
           flexDirection: 'column',
           gap: 10,
-          justifyContent: 'center',
         }}
       >
-        <div
-          style={{
-            fontSize: isMobile ? 17 : wide ? 22 : 16,
-            fontWeight: 500,
-            letterSpacing: '-0.01em',
-            color: '#f0f0f0',
-            lineHeight: 1.25,
-          }}
-        >
-          {title}
-        </div>
-        <div
-          style={{
-            fontSize: isMobile ? 13 : wide ? 14.5 : 13,
-            color: TOKENS.muted,
-            lineHeight: 1.55,
-          }}
-        >
-          {body}
-        </div>
+        {ASSISTANT_PREVIEW_STEPS.map((step, i) => (
+          <ChatBubble key={i} step={step} />
+        ))}
       </div>
-      <div>{right}</div>
-    </div>
-  )
-}
 
-function PortionDemo() {
-  return (
-    <div
-      style={{
-        border: `1px solid ${TOKENS.line2}`,
-        borderRadius: 6,
-        background: '#0c0c0c',
-        padding: 14,
-        fontSize: 12,
-      }}
-    >
-      <div style={{ color: '#e0e0e0', marginBottom: 10, fontSize: 13 }}>
-        "half a cup rice + palm salmon"
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-        <CapRow label="Jasmine rice · ~100g" v="130 kcal" tag="library" tagC={TOKENS.accent} />
-        <CapRow label="Salmon fillet · ~120g" v="250 kcal" tag="estimated" tagC={TOKENS.warn} />
-        <CapRow
-          label="Olive oil · assumed 1 tsp"
-          v="40 kcal"
-          tag="assumption"
-          tagC={TOKENS.muted}
-        />
-      </div>
       <div
         style={{
           borderTop: `1px solid ${TOKENS.line2}`,
-          marginTop: 12,
-          paddingTop: 10,
+          padding: '10px 14px',
           display: 'flex',
-          justifyContent: 'space-between',
-          fontSize: 11,
+          alignItems: 'center',
+          gap: 10,
+          background: '#0c0c0c',
         }}
       >
-        <MonoLabel>TOTAL</MonoLabel>
-        <span className="mono" style={{ color: TOKENS.accent }}>
-          420 kcal · 34g P
-        </span>
+        <MonoLabel>›</MonoLabel>
+        <div style={{ flex: 1, color: TOKENS.muted2, fontSize: 13 }}>
+          Tell me what you ate…
+        </div>
+        <div
+          style={{
+            border: `1px solid ${TOKENS.line2}`,
+            borderRadius: 4,
+            padding: '3px 7px',
+          }}
+        >
+          <MonoLabel>⏎</MonoLabel>
+        </div>
       </div>
     </div>
   )
 }
 
-function CapRow({ label, v, tag, tagC }) {
+function AIAssistantSection() {
+  const isMobile = useIsMobile()
   return (
-    <div
+    <section
+      id="ai-assistant"
       style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr auto auto',
-        gap: 10,
-        alignItems: 'center',
+        borderBottom: `1px solid ${TOKENS.line}`,
+        padding: isMobile ? '56px 16px' : '96px 28px',
       }}
     >
-      <span style={{ color: '#dcdcdc' }}>{label}</span>
-      <span
-        className="mono"
+      <div
         style={{
-          fontSize: 9,
-          letterSpacing: '0.1em',
-          textTransform: 'uppercase',
-          color: tagC,
-          border: `1px solid ${tagC}`,
-          padding: '2px 6px',
-          borderRadius: 3,
-          opacity: 0.9,
+          maxWidth: 1240,
+          margin: '0 auto',
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+          gap: isMobile ? 32 : 64,
+          alignItems: 'center',
         }}
       >
-        {tag}
-      </span>
-      <span className="mono" style={{ fontSize: 11 }}>
-        {v}
-      </span>
-    </div>
+        <div>
+          <SectionHeader
+            kicker="AI ASSISTANT"
+            title={
+              <>
+                Just say what you{' '}
+                <span
+                  className="serif"
+                  style={{ color: TOKENS.accent, fontStyle: 'italic' }}
+                >
+                  ate
+                </span>
+                .
+              </>
+            }
+            sub="Tell the assistant what you ate in plain English or take a picture of your food and it figures out the foods, portions and macros for you."
+          />
+
+          <ul
+            style={{
+              listStyle: 'none',
+              padding: 0,
+              margin: isMobile ? '20px 0 0' : '28px 0 0',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 10,
+            }}
+          >
+            {[
+              'Tell it what you ate - "2 eggs on toast and a coffee"',
+              'or take a picture of your plate',
+              'Get accurate macros for every item, instantly',
+              'Edit a portion or correct a guess in one tap',
+              'Ask for meal recommendations, recipes, or nutrition advice',
+              "plan your next day's meals",
+            ].map((t) => (
+              <li
+                key={t}
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: 12,
+                  fontSize: isMobile ? 14 : 15,
+                  color: '#d4d4d4',
+                  lineHeight: 1.55,
+                }}
+              >
+                <Dot
+                  color={TOKENS.accent}
+                  size={6}
+                  style={{ marginTop: 8, flexShrink: 0 }}
+                />
+                <span>{t}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <AssistantPreview />
+        </div>
+      </div>
+    </section>
   )
 }
 
-function LibraryDemo() {
+/* ============================================================
+   Food Library feature section
+   ============================================================ */
+
+function LibraryPreview() {
   const items = [
-    'Chicken breast',
-    'Oats 100g',
-    'Protein shake',
-    'Greek yogurt',
-    'Banana',
-    'Avocado',
+    { n: 'Chicken breast', t: '100g', kcal: 165, p: 31, used: 12 },
+    { n: 'Greek yogurt 0%', t: '150g', kcal: 100, p: 17, used: 9 },
+    { n: 'Oats', t: '100g dry', kcal: 380, p: 13, used: 8 },
+    { n: 'Banana', t: 'medium', kcal: 110, p: 1.3, used: 6 },
+    { n: 'Avocado', t: '½ medium', kcal: 120, p: 1.5, used: 4 },
+    { n: 'Whey protein', t: '1 scoop', kcal: 130, p: 25, used: 4 },
   ]
   return (
     <div
       style={{
+        background: TOKENS.bg1,
         border: `1px solid ${TOKENS.line2}`,
-        borderRadius: 6,
-        background: '#0c0c0c',
-        padding: 12,
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: 6,
-        fontSize: 12,
-      }}
-    >
-      {items.map((x, i) => (
-        <div
-          key={x}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '5px 8px',
-            border: `1px solid ${TOKENS.line}`,
-            borderRadius: 4,
-            background: i < 3 ? '#0f140a' : 'transparent',
-          }}
-        >
-          <Dot color={i < 3 ? TOKENS.accent : '#333'} size={4} />
-          <span style={{ color: i < 3 ? '#e0e0e0' : TOKENS.muted }}>{x}</span>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function PlannerDemo() {
-  return (
-    <div
-      style={{
-        border: `1px solid ${TOKENS.line2}`,
-        borderRadius: 6,
-        background: '#0c0c0c',
-        padding: 12,
-        fontSize: 12,
-      }}
-    >
-      <MonoLabel color={TOKENS.accent} style={{ display: 'block', marginBottom: 8 }}>
-        PLAN · TOMORROW
-      </MonoLabel>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-        {[
-          ['Breakfast', 540],
-          ['Lunch', 620],
-          ['Dinner', 720],
-          ['Snack', 120],
-        ].map(([label, v]) => (
-          <div key={label} style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#dcdcdc' }}>{label}</span>
-            <span className="mono" style={{ color: TOKENS.muted }}>
-              {v}
-            </span>
-          </div>
-        ))}
-      </div>
-      <div
-        style={{
-          marginTop: 10,
-          paddingTop: 8,
-          borderTop: `1px solid ${TOKENS.line2}`,
-          display: 'flex',
-          justifyContent: 'space-between',
-        }}
-      >
-        <MonoLabel>PROTEIN</MonoLabel>
-        <span className="mono" style={{ color: TOKENS.accent, fontSize: 11 }}>
-          161g · 100%
-        </span>
-      </div>
-    </div>
-  )
-}
-
-function TrendDemo() {
-  const bars = [65, 80, 92, 70, 88, 95, 100, 82, 91, 74, 86, 98, 90]
-  return (
-    <div
-      style={{
-        border: `1px solid ${TOKENS.line2}`,
-        borderRadius: 6,
-        background: '#0c0c0c',
-        padding: 12,
-      }}
-    >
-      <div
-        style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}
-      >
-        <MonoLabel>LAST 13 DAYS</MonoLabel>
-        <MonoLabel color={TOKENS.accent}>STREAK · 6</MonoLabel>
-      </div>
-      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 56 }}>
-        {bars.map((b, i) => (
-          <div
-            key={i}
-            style={{
-              flex: 1,
-              height: `${b}%`,
-              background: b >= 85 ? TOKENS.accent : '#2a2a2a',
-              borderRadius: 1,
-            }}
-          />
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function FixDemo() {
-  return (
-    <div
-      style={{
-        border: `1px solid ${TOKENS.line2}`,
-        borderRadius: 6,
-        background: '#0c0c0c',
-        padding: 12,
-        fontSize: 12,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 6,
+        borderRadius: 8,
+        overflow: 'hidden',
+        boxShadow: '0 40px 80px -40px rgba(200,240,102,0.06)',
       }}
     >
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 8,
-          padding: '6px 9px',
-          borderRadius: 4,
-          background: '#1a1a1a',
-          border: `1px solid ${TOKENS.line2}`,
-          alignSelf: 'flex-end',
-          maxWidth: '90%',
+          justifyContent: 'space-between',
+          padding: '11px 14px',
+          borderBottom: `1px solid ${TOKENS.line2}`,
+          background: '#0c0c0c',
         }}
       >
-        actually make that 150g not 200
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Dot color={TOKENS.accent} size={6} />
+          <MonoLabel color="#fff">YOUR LIBRARY</MonoLabel>
+        </div>
+        <MonoLabel>{items.length} foods</MonoLabel>
       </div>
+
+      <div>
+        {items.map((it, i) => (
+          <div
+            key={it.n}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr auto auto',
+              gap: 14,
+              padding: '12px 14px',
+              alignItems: 'center',
+              borderBottom: i < items.length - 1 ? `1px solid ${TOKENS.line}` : 'none',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+                minWidth: 0,
+              }}
+            >
+              <span style={{ fontSize: 13.5, color: '#e6e6e6' }}>{it.n}</span>
+              <span
+                className="mono"
+                style={{ fontSize: 10, color: TOKENS.muted, letterSpacing: '0.06em' }}
+              >
+                {it.t} · used {it.used}× this month
+              </span>
+            </div>
+            <span
+              className="mono"
+              style={{ fontSize: 10, color: TOKENS.muted, whiteSpace: 'nowrap' }}
+            >
+              {it.p}g P
+            </span>
+            <span
+              className="mono"
+              style={{
+                fontSize: 12,
+                color: '#fff',
+                minWidth: 44,
+                textAlign: 'right',
+              }}
+            >
+              {it.kcal}
+            </span>
+          </div>
+        ))}
+      </div>
+
       <div
         style={{
-          padding: '6px 9px',
-          borderRadius: 4,
-          background: '#0f140a',
-          border: '1px solid #2a3a14',
-          fontSize: 12,
-          color: '#dcdcdc',
+          borderTop: `1px solid ${TOKENS.line2}`,
+          padding: '10px 14px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          background: '#0c0c0c',
         }}
       >
-        <div>
-          Chicken breast: <s style={{ color: '#666' }}>200g</s> →{' '}
-          <span style={{ color: TOKENS.accent }}>150g</span>
-        </div>
-        <div className="mono" style={{ fontSize: 10, color: TOKENS.muted }}>
-          kcal −82 · P −15g
-        </div>
+        <MonoLabel>SORTED · MOST USED</MonoLabel>
+        <MonoLabel color={TOKENS.accent}>+ ADD</MonoLabel>
       </div>
     </div>
+  )
+}
+
+function FoodLibrarySection() {
+  const isMobile = useIsMobile()
+  return (
+    <section
+      id="food-library"
+      style={{
+        borderBottom: `1px solid ${TOKENS.line}`,
+        padding: isMobile ? '56px 16px' : '96px 28px',
+        background: '#0c0c0c',
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 1240,
+          margin: '0 auto',
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+          gap: isMobile ? 32 : 64,
+          alignItems: 'center',
+        }}
+      >
+        {!isMobile && (
+          <div>
+            <LibraryPreview />
+          </div>
+        )}
+
+        <div>
+          <SectionHeader
+            kicker="FOOD LIBRARY"
+            title={
+              <>
+                Your favourite foods,{' '}
+                <span
+                  className="serif"
+                  style={{ color: TOKENS.accent, fontStyle: 'italic' }}
+                >
+                  one tap
+                </span>{' '}
+                away.
+              </>
+            }
+            sub="Macro.AI saves the meals and ingredients you eat all the time. Reuse them in a tap — or let the assistant pull them in for you."
+          />
+
+          <ul
+            style={{
+              listStyle: 'none',
+              padding: 0,
+              margin: isMobile ? '20px 0 0' : '28px 0 0',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 10,
+            }}
+          >
+            {[
+              'Save any food you want and reuse later',
+              'Tell the assistant to save something in your library for you',
+              'The assistant reaches for your library first',
+            ].map((t) => (
+              <li
+                key={t}
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: 12,
+                  fontSize: isMobile ? 14 : 15,
+                  color: '#d4d4d4',
+                  lineHeight: 1.55,
+                }}
+              >
+                <Dot
+                  color={TOKENS.accent}
+                  size={6}
+                  style={{ marginTop: 8, flexShrink: 0 }}
+                />
+                <span>{t}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {isMobile && (
+          <div>
+            <LibraryPreview />
+          </div>
+        )}
+      </div>
+    </section>
   )
 }
 
@@ -2097,25 +1282,21 @@ function FixDemo() {
 function FAQ() {
   const items = [
     {
-      q: 'Do I need to know my macros?',
-      a: 'No. Put in your height, weight and goal (cut / maintain / bulk) and Macro.AI suggests starting numbers. You can tune them any time.',
-    },
-    {
-      q: 'Is my data private?',
-      a: 'Yes. Every row is locked to your account with Postgres row-level security. No one at Macro.AI can browse what you ate for lunch.',
+      q: 'Why do I need to know my macros?',
+      a: 'Macros — calories, protein, carbs and fat — explain what your food actually does in your body. Knowing them helps you hit a calorie target for your goal (fat loss, maintenance, or muscle gain), get enough protein to preserve or build muscle, and avoid guessing every day. You do not need to be an expert: Macro.AI suggests sensible targets from your stats and goal, and the assistant keeps tracking light so you learn as you go.',
     },
     {
       q: 'What if the AI gets a portion wrong?',
-      a: 'Every AI-estimated entry is tagged. One-tap to correct, or just tell the assistant and it fixes itself.',
+      a: 'One-tap to correct, or just tell the assistant and it fixes itself.',
     },
     {
       q: 'Does it work for cutting / bulking?',
       a: "That's the whole point. Set a calorie + protein target, log normally, and the assistant flags when you drift.",
     },
-    { q: 'Can I export my data?', a: 'CSV export from History. You own what you log.' },
+    { q: 'Can I export my data?', a: 'Coming soon.' },
     {
       q: 'Is there a mobile app?',
-      a: 'iOS and Android via the same account. Currently in private beta. Join the waitlist below.',
+      a: 'Coming soon.',
     },
   ]
   const [open, setOpen] = useState(0)
@@ -2427,11 +1608,8 @@ export default function LandingPage() {
     >
       <Nav />
       <Hero />
-      <TrustBand />
-      <ComparisonSection />
-      <AppPreview />
-      <HowItWorks />
-      <Capabilities />
+      <AIAssistantSection />
+      <FoodLibrarySection />
       <FAQ />
       <FinalCTA />
       <Footer />
