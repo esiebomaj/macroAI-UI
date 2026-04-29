@@ -45,6 +45,7 @@ export default function DashboardPage() {
   const coachCardRef = useRef(null)
   const tracker = useTracker()
   const isMobile = useIsMobile()
+  const mobileDensityClass = isMobile ? 'mobile-app-density' : ''
 
   useLayoutEffect(() => {
     if (fabHintDismissed || chatOpen) return
@@ -89,14 +90,14 @@ export default function DashboardPage() {
   }
 
   if (authLoading) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', color: '#666', fontSize: 13, fontFamily: 'DM Mono, monospace' }}>
+    <div className={mobileDensityClass} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', color: '#666', fontSize: 13, fontFamily: 'DM Mono, monospace' }}>
       Loading...
     </div>
   )
   if (!session) return <Navigate to="/auth" replace />
 
   if (tracker.loading) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', color: '#666', fontSize: 13, fontFamily: 'DM Mono, monospace' }}>
+    <div className={mobileDensityClass} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', color: '#666', fontSize: 13, fontFamily: 'DM Mono, monospace' }}>
       Fetching your data...
     </div>
   )
@@ -110,7 +111,7 @@ export default function DashboardPage() {
     : { padding: '2rem', overflowY: 'auto', borderRight: '1px solid #2a2a2a', height: '100vh', minHeight: 0 }
 
   return (
-    <div style={wrapperStyle}>
+    <div style={wrapperStyle} className={mobileDensityClass}>
 
       {/* Main / left panel */}
       <div style={leftStyle}>

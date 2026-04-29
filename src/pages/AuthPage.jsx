@@ -3,9 +3,12 @@ import { Navigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { Link } from 'react-router-dom'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 export default function AuthPage() {
   const { session, loading } = useAuth()
+  const isMobile = useIsMobile()
+  const mobileDensityClass = isMobile ? 'mobile-app-density' : ''
   const [mode, setMode] = useState('login') // 'login' | 'register'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -13,7 +16,7 @@ export default function AuthPage() {
   const [info, setInfo] = useState('')
   const [busy, setBusy] = useState(false)
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen text-muted text-sm font-mono">Loading...</div>
+  if (loading) return <div className={`flex items-center justify-center min-h-screen text-muted text-sm font-mono ${mobileDensityClass}`}>Loading...</div>
   if (session) return <Navigate to="/app" replace />
 
   async function handleSubmit(e) {
@@ -46,7 +49,7 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4" style={{ background: '#0e0e0e' }}>
+    <div className={`flex items-center justify-center min-h-screen px-4 ${mobileDensityClass}`} style={{ background: '#0e0e0e' }}>
       <div className="auth-card" style={{ background: '#161616', border: '1px solid #2a2a2a', borderRadius: 16, padding: '2.5rem', width: '100%', maxWidth: 400 }}>
 
         {/* Logo */}
