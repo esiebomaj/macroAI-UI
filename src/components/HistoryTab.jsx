@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import HistoryMacroChart from './HistoryMacroChart'
 
 const MEAL_ORDER = ['Breakfast', 'Lunch', 'Dinner', 'Snack']
 
@@ -27,6 +28,7 @@ export default function HistoryTab({ history, goals, fetchHistory }) {
 
   return (
     <div>
+       <HistoryMacroChart history={history} />
       {keys.map(k => {
         const d = history[k]
         const pct = Math.round(d.cal / goals.cal * 100)
