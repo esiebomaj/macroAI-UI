@@ -166,6 +166,24 @@ export default function ChatPanel({ refetchAll, isMobile = false, onClose }) {
   const [attachError, setAttachError] = useState('')
   const messagesRef = useRef(null)
   const fileInputRef = useRef(null)
+  const headerSwipeStartY = useRef(null)
+
+  function handleHeaderTouchStart(e) {
+    if (!isMobile || !onClose) return
+    headerSwipeStartY.current = e.touches[0].clientY
+  }
+
+  function handleHeaderTouchEnd(e) {
+    if (!isMobile || !onClose || headerSwipeStartY.current == null) return
+    const y = e.changedTouches[0].clientY
+    const delta = y - headerSwipeStartY.current
+    headerSwipeStartY.current = null
+    if (delta > 64) onClose()
+  }
+
+  function handleHeaderTouchCancel() {
+    headerSwipeStartY.current = null
+  }
 
   useEffect(() => {
     const el = messagesRef.current
@@ -275,26 +293,67 @@ export default function ChatPanel({ refetchAll, isMobile = false, onClose }) {
     : { display: 'flex', flexDirection: 'column', background: '#161616', height: '100vh', position: 'sticky', top: 0 }
 
   const pad = isMobile ? '1rem 1rem' : '1.2rem 1.5rem'
+  const headerTitlePaddingTop = isMobile ? '0.35rem' : '1.2rem'
 
   return (
     <div style={rootStyle}>
-      {/* Header */}
-      <div style={{ padding: pad, borderBottom: '1px solid #2a2a2a', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#666', display: 'flex', alignItems: 'center', gap: 8 }}>
-        <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#c8f066', animation: 'pulse 2s infinite' }} />
-        <span style={{ flex: 1 }}>AI Assistant</span>
+      {/* Grabber + header — swipe down on this region to close (mobile) */}
+      <div
+        style={{ flexShrink: 0, borderBottom: '1px solid #2a2a2a' }}
+        onTouchStart={handleHeaderTouchStart}
+        onTouchEnd={handleHeaderTouchEnd}
+        onTouchCancel={handleHeaderTouchCancel}
+      >
         {isMobile && onClose && (
-          <button
-            onClick={onClose}
-            aria-label="Close chat"
+          <div
+            aria-hidden
             style={{
-              background: 'none', border: '1px solid #2a2a2a', borderRadius: 6,
-              width: 30, height: 30, color: '#888', cursor: 'pointer',
-              fontSize: 18, lineHeight: 1, padding: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: 'DM Sans, sans-serif',
+              paddingTop: 10,
+              paddingBottom: 6,
+              display: 'flex',
+              justifyContent: 'center',
             }}
-          >×</button>
+          >
+            <div
+              style={{
+                width: 40,
+                height: 5,
+                borderRadius: 99,
+                background: '#3a3a3a',
+              }}
+            />
+          </div>
         )}
+        <div
+          style={{
+            padding: pad,
+            paddingTop: headerTitlePaddingTop,
+            fontSize: 12,
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            color: '#666',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#c8f066', animation: 'pulse 2s infinite' }} />
+          <span style={{ flex: 1 }}>AI Assistant</span>
+          {isMobile && onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close assistant"
+              style={{
+                background: 'none', border: '1px solid #2a2a2a', borderRadius: 6,
+                width: 36, height: 36, color: '#888', cursor: 'pointer',
+                fontSize: 20, lineHeight: 1, padding: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontFamily: 'DM Sans, sans-serif',
+              }}
+            >×</button>
+          )}
+        </div>
       </div>
 
       {/* Messages */}
@@ -358,6 +417,45 @@ export default function ChatPanel({ refetchAll, isMobile = false, onClose }) {
           </div>
         )}
       </div>
+
+      {/* Thumb-zone close — aligned with dashboard FAB (mobile) */}
+      {isMobile && onClose && (
+        <div
+          style={{
+            flexShrink: 0,
+            padding: '10px 16px',
+            borderTop: '1px solid #2a2a2a',
+            display: 'flex',
+            justifyContent: 'flex-end',
+            background: '#161616',
+          }}
+        >
+          <button
+            type="button"
+            onClick={onClose}
+            style={{
+              minHeight: 48,
+              padding: '12px 18px',
+              borderRadius: 999,
+              background: 'transparent',
+              color: '#c8f066',
+              border: '1px solid #3a3a3a',
+              fontFamily: 'DM Sans, sans-serif',
+              fontSize: 14,
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ display: 'block' }}>
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+            Close assistant
+          </button>
+        </div>
+      )}
 
       {/* Input */}
       <div style={{
