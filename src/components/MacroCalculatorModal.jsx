@@ -275,7 +275,12 @@ export default function MacroCalculatorModal({ goals, onClose, calculateMacros, 
           </div>
           <div style={{ marginTop: 10 }}>
             <div style={fieldLabel}>Target date</div>
-            <input type="date" value={profile.target_date} onChange={e => set('target_date', e.target.value)} />
+            <input
+              type="date"
+              value={profile.target_date}
+              onChange={e => set('target_date', e.target.value)}
+              style={{ display: 'block', width: '100%', minWidth: 0, WebkitAppearance: 'none', appearance: 'none' }}
+            />
           </div>
 
           {/* Live pace hint */}
