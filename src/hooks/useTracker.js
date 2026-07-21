@@ -5,20 +5,27 @@ export function useTracker() {
   const [goals, setGoals] = useState({ cal: 2000, pro: 160, carb: 180, fat: 71, weight: null, goal_weight: null })
   const [todayLog, setTodayLog] = useState([])
   const [library, setLibrary] = useState([])
+  const [meals, setMeals] = useState([])
   const [history, setHistory] = useState({})
   const [loading, setLoading] = useState(true)
 
   const fetchAll = useCallback(async (withLoading = true) => {
     if (withLoading) setLoading(true)
     try {
-      const [goalsRes, logRes, libRes] = await Promise.all([
+      const [goalsRes, logRes, libRes, mealsRes] = await Promise.all([
         api.get('/goals/'),
         api.get('/log/'),
         api.get('/library/'),
+        api.get('/meals/'),
       ])
+      console.log('goalsRes', goalsRes)
+      console.log('logRes', logRes)
+      console.log('libRes', libRes)
+      console.log('mealsRes', mealsRes)
       setGoals(goalsRes.data)
       setTodayLog(logRes.data)
       setLibrary(libRes.data)
+      setMeals(mealsRes.data)
     } catch (e) {
       console.error('Failed to load data', e)
     } finally {
@@ -71,11 +78,41 @@ export function useTracker() {
     return res.data
   }, [])
 
+  const fetchMeals = useCallback(async () => {
+    const res = await api.get('/meals/')
+    setMeals(res.data)
+    return res.data
+  }, [])
+
+  const addMeal = useCallback(async (meal) => {
+    const res = await api.post('/meals/', meal)
+    setMeals(prev => [...prev, res.data])
+    return res.data
+  }, [])
+
+  const updateMeal = useCallback(async (id, meal) => {
+    const res = await api.put(`/meals/${id}`, meal)
+    setMeals(prev => prev.map(m => m.id === id ? res.data : m))
+    return res.data
+  }, [])
+
+  const removeMeal = useCallback(async (id) => {
+    await api.delete(`/meals/${id}`)
+    setMeals(prev => prev.filter(m => m.id !== id))
+  }, [])
+
+  const logMeal = useCallback(async (mealId, mealTime) => {
+    const res = await api.post(`/meals/${mealId}/log`, { meal: mealTime })
+    setTodayLog(prev => [...prev, ...res.data])
+    return res.data
+  }, [])
+
   return {
-    goals, todayLog, library, history,
+    goals, todayLog, library, meals, history,
     loading, fetchAll, fetchHistory,
     addLogEntry, removeLogEntry,
     addFood, updateFood, removeFood,
     saveGoals,
+    fetchMeals, addMeal, updateMeal, removeMeal, logMeal,
   }
 }

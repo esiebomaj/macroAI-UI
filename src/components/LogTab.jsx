@@ -12,7 +12,7 @@ const S = {
   foodItem: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: '#161616', border: '1px solid #2a2a2a', borderTop: 'none', gap: 10 },
 }
 
-export default function LogTab({ goals, todayLog, library, addLogEntry, removeLogEntry }) {
+export default function LogTab({ goals, todayLog, library, meals = [], addLogEntry, removeLogEntry, logMeal }) {
   const isMobile = useIsMobile()
   const metricGrid = {
     display: 'grid',
@@ -25,6 +25,8 @@ export default function LogTab({ goals, todayLog, library, addLogEntry, removeLo
   const [qty, setQty] = useState(1)
   const [fields, setFields] = useState({ cal: '', pro: '', carb: '', fat: '', name: '' })
   const [adding, setAdding] = useState(false)
+  const [selectedMeal, setSelectedMeal] = useState('')
+  const [loggingMeal, setLoggingMeal] = useState(false)
 
   const tot = todayLog.reduce((a, e) => ({
     cal: a.cal + e.cal, pro: a.pro + e.pro, carb: a.carb + e.carb, fat: a.fat + e.fat
@@ -36,6 +38,7 @@ export default function LogTab({ goals, todayLog, library, addLogEntry, removeLo
 
   function pickFood(i) {
     setSelectedFood(i)
+    setSelectedMeal('')
     if (i === '') return
     const f = library[i]
     setFields({ cal: f.cal, pro: f.pro, carb: f.carb, fat: f.fat, name: '' })
@@ -57,7 +60,41 @@ export default function LogTab({ goals, todayLog, library, addLogEntry, removeLo
     setQty(1); setSelectedFood('')
   }
 
-  const meals = ['Breakfast','Lunch','Dinner','Snack']
+  const mealTimes = ['Breakfast','Lunch','Dinner','Snack']
+
+  function segBtn(active) {
+    return {
+      padding: '8px 4px', fontSize: 12, cursor: 'pointer', textAlign: 'center',
+      border: '1px solid', borderColor: active ? '#c8f066' : '#2a2a2a',
+      background: active ? 'rgba(200,240,102,0.10)' : 'none',
+      color: active ? '#c8f066' : '#888', borderRadius: 6,
+      fontFamily: 'DM Sans, sans-serif', fontWeight: active ? 500 : 400,
+    }
+  }
+
+  function pickMeal(v) {
+    setSelectedMeal(v)
+    if (v !== '') {
+      setSelectedFood('')
+      setFields({ cal: '', pro: '', carb: '', fat: '', name: '' })
+      setQty(1)
+    }
+  }
+
+  async function handleLogMeal() {
+    if (selectedMeal === '') return
+    const m = meals[selectedMeal]
+    if (!m) return
+    setLoggingMeal(true)
+    await logMeal(m.id, meal)
+    setLoggingMeal(false)
+    setSelectedMeal('')
+  }
+
+  async function handleSubmit() {
+    if (selectedMeal !== '') return handleLogMeal()
+    return handleAdd()
+  }
 
   return (
     <div>
@@ -90,31 +127,55 @@ export default function LogTab({ goals, todayLog, library, addLogEntry, removeLo
         </div>
       </div>
 
-      {/* Add food */}
+      {/* Add to log (food or saved meal) */}
       <div style={S.card}>
-        <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#666', marginBottom: 10 }}>Add food</div>
-        <select value={meal} onChange={e => setMeal(e.target.value)} style={{ marginBottom: 8 }}>
-          {meals.map(m => <option key={m}>{m}</option>)}
-        </select>
-        <select value={selectedFood} onChange={e => pickFood(e.target.value)} style={{ marginBottom: 8 }}>
-          <option value="">-- pick from library --</option>
-          {library.map((f, i) => <option key={f.id} value={i}>{f.name} ({f.unit})</option>)}
-        </select>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-          <input type="number" placeholder="Qty" min="1" value={qty} onChange={e => setQty(e.target.value)} />
-          <input type="number" placeholder="kcal" value={fields.cal} onChange={e => setFields(p => ({...p, cal:e.target.value}))} />
-          <input type="number" placeholder="Protein g" value={fields.pro} onChange={e => setFields(p => ({...p, pro:e.target.value}))} />
-          <input type="number" placeholder="Carbs g" value={fields.carb} onChange={e => setFields(p => ({...p, carb:e.target.value}))} />
-          <input type="number" placeholder="Fat g" value={fields.fat} onChange={e => setFields(p => ({...p, fat:e.target.value}))} />
-          <input type="text" placeholder="Food name" value={fields.name} onChange={e => setFields(p => ({...p, name:e.target.value}))} />
+        {/* When: meal-time as its own segmented control */}
+        <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#666', marginBottom: 8 }}>Meal time</div>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: 6 }}>
+          {mealTimes.map(m => (
+            <button key={m} onClick={() => setMeal(m)} style={segBtn(meal === m)}>{m}</button>
+          ))}
         </div>
-        <button onClick={handleAdd} disabled={adding} style={{ width: '100%', padding: 10, background: '#c8f066', color: '#0e0e0e', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: adding ? 'not-allowed' : 'pointer', marginTop: 8, opacity: adding ? 0.6 : 1, fontFamily: 'DM Sans, sans-serif' }}>
-          {adding ? 'Adding...' : 'Add to log'}
-        </button>
+
+        {/* What: saved meal or a food item */}
+        <div style={{ borderTop: '1px solid #2a2a2a', marginTop: 16, paddingTop: 16 }}>
+          {meals.length > 0 && (
+            <select value={selectedMeal} onChange={e => pickMeal(e.target.value)} style={{ marginBottom: 8 }}>
+              <option value="">-- pick a saved meal --</option>
+              {meals.map((m, i) => <option key={m.id} value={i}>{m.name} ({m.total_cal} kcal)</option>)}
+            </select>
+          )}
+          {meals.length > 0 && selectedMeal === '' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '4px 0 10px' }}>
+              <div style={{ flex: 1, height: 1, background: '#2a2a2a' }} />
+              <span style={{ fontSize: 11, color: '#666', textTransform: 'uppercase', letterSpacing: '0.08em' }}>or</span>
+              <div style={{ flex: 1, height: 1, background: '#2a2a2a' }} />
+            </div>
+          )}
+          {selectedMeal === '' && (
+            <>
+              <select value={selectedFood} onChange={e => pickFood(e.target.value)} style={{ marginBottom: 8 }}>
+                <option value="">-- pick a food item --</option>
+                {library.map((f, i) => <option key={f.id} value={i}>{f.name} ({f.unit})</option>)}
+              </select>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                <input type="number" placeholder="Qty" min="1" value={qty} onChange={e => setQty(e.target.value)} />
+                <input type="number" placeholder="kcal" value={fields.cal} onChange={e => setFields(p => ({...p, cal:e.target.value}))} />
+                <input type="number" placeholder="Protein g" value={fields.pro} onChange={e => setFields(p => ({...p, pro:e.target.value}))} />
+                <input type="number" placeholder="Carbs g" value={fields.carb} onChange={e => setFields(p => ({...p, carb:e.target.value}))} />
+                <input type="number" placeholder="Fat g" value={fields.fat} onChange={e => setFields(p => ({...p, fat:e.target.value}))} />
+                <input type="text" placeholder="Food name" value={fields.name} onChange={e => setFields(p => ({...p, name:e.target.value}))} />
+              </div>
+            </>
+          )}
+          <button onClick={handleSubmit} disabled={adding || loggingMeal} style={{ width: '100%', padding: 10, background: '#c8f066', color: '#0e0e0e', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: (adding || loggingMeal) ? 'not-allowed' : 'pointer', marginTop: 8, opacity: (adding || loggingMeal) ? 0.6 : 1, fontFamily: 'DM Sans, sans-serif' }}>
+            {selectedMeal !== '' ? (loggingMeal ? 'Logging...' : 'Log meal') : (adding ? 'Adding...' : 'Add to log')}
+          </button>
+        </div>
       </div>
 
       {/* Log entries */}
-      {meals.map(m => {
+      {mealTimes.map(m => {
         const entries = todayLog.filter(e => e.meal === m)
         if (!entries.length) return null
         const mTot = entries.reduce((a,e) => ({cal:a.cal+e.cal, pro:a.pro+e.pro}), {cal:0,pro:0})

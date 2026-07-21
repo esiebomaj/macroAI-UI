@@ -178,8 +178,10 @@ export default function DashboardPage() {
             goals={tracker.goals}
             todayLog={tracker.todayLog}
             library={tracker.library}
+            meals={tracker.meals}
             addLogEntry={tracker.addLogEntry}
             removeLogEntry={tracker.removeLogEntry}
+            logMeal={tracker.logMeal}
           />
         )}
         {activeTab === 'Library' && (
@@ -188,6 +190,10 @@ export default function DashboardPage() {
             addFood={tracker.addFood}
             updateFood={tracker.updateFood}
             removeFood={tracker.removeFood}
+            meals={tracker.meals}
+            addMeal={tracker.addMeal}
+            updateMeal={tracker.updateMeal}
+            removeMeal={tracker.removeMeal}
           />
         )}
         {activeTab === 'History' && (

@@ -65,6 +65,9 @@ const TOOL_LABELS = {
   modify_food_in_library: 'Updating library item',
   update_goals: 'Updating goals',
   list_log_entries: 'Reading log',
+  create_meal: 'Creating meal',
+  log_meal: 'Logging meal',
+  list_meals: 'Reading meals',
 }
 
 function prettyToolName(name) {
