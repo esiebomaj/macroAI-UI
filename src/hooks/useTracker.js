@@ -78,6 +78,12 @@ export function useTracker() {
     return res.data
   }, [])
 
+  // Compute daily targets from a body profile without persisting anything.
+  const calculateMacros = useCallback(async (profile) => {
+    const res = await api.post('/goals/calculate', profile)
+    return res.data
+  }, [])
+
   const fetchMeals = useCallback(async () => {
     const res = await api.get('/meals/')
     setMeals(res.data)
@@ -112,7 +118,7 @@ export function useTracker() {
     loading, fetchAll, fetchHistory,
     addLogEntry, removeLogEntry,
     addFood, updateFood, removeFood,
-    saveGoals,
+    saveGoals, calculateMacros,
     fetchMeals, addMeal, updateMeal, removeMeal, logMeal,
   }
 }

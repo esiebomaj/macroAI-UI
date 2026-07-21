@@ -207,6 +207,7 @@ export default function DashboardPage() {
           <GoalsTab
             goals={tracker.goals}
             saveGoals={tracker.saveGoals}
+            calculateMacros={tracker.calculateMacros}
           />
         )}
       </div>

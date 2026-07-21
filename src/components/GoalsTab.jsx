@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useIsMobile } from '../hooks/useIsMobile'
+import MacroCalculatorModal from './MacroCalculatorModal'
 
-export default function GoalsTab({ goals, saveGoals }) {
+export default function GoalsTab({ goals, saveGoals, calculateMacros }) {
   const isMobile = useIsMobile()
   const [form, setForm] = useState({ cal: '', pro: '', carb: '', fat: '', weight: '', goal_weight: '' })
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [calcOpen, setCalcOpen] = useState(false)
 
   useEffect(() => {
     setForm({
@@ -16,7 +18,14 @@ export default function GoalsTab({ goals, saveGoals }) {
 
   async function handleSave() {
     setSaving(true)
-    await saveGoals({ cal: +form.cal, pro: +form.pro, carb: +form.carb, fat: +form.fat, weight: +form.weight||null, goal_weight: +form.goal_weight||null })
+    // Preserve any stored profile fields so a manual edit doesn't wipe them.
+    await saveGoals({
+      cal: +form.cal, pro: +form.pro, carb: +form.carb, fat: +form.fat,
+      weight: +form.weight || null, goal_weight: +form.goal_weight || null,
+      age: goals.age ?? null, height_cm: goals.height_cm ?? null,
+      sex: goals.sex ?? null, activity_level: goals.activity_level ?? null,
+      target_date: goals.target_date ?? null,
+    })
     setSaving(false); setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
@@ -27,8 +36,30 @@ export default function GoalsTab({ goals, saveGoals }) {
 
   const diff = form.weight && form.goal_weight ? (parseFloat(form.weight) - parseFloat(form.goal_weight)).toFixed(1) : null
 
+  const lastCalcLabel = goals.target_date && goals.age
+    ? `Last updated on ${goals.target_date}`
+    : 'Set your body profile and let us do the math'
+
   return (
     <div>
+      {/* Standout calculator trigger */}
+      <button
+        onClick={() => setCalcOpen(true)}
+        style={{
+          width: '100%', textAlign: 'left', cursor: 'pointer',
+          background: 'linear-gradient(180deg, #1c2210 0%, #171a12 100%)',
+          border: '1px solid #8aaa3a', borderRadius: 10, padding: '14px 16px',
+          marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
+          fontFamily: 'DM Sans, sans-serif',
+        }}
+      >
+        <div style={{ minWidth: 0 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: '#c8f066' }}>✦ Help me calculate my targets</div>
+          <div style={{ fontSize: 11, color: '#8a9a6a', marginTop: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{lastCalcLabel}</div>
+        </div>
+        <span style={{ fontSize: 18, color: '#c8f066', flexShrink: 0 }}>→</span>
+      </button>
+
       <div style={card}>
         <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#666', marginBottom: 12 }}>Daily targets</div>
         <div style={grid2}>
@@ -74,6 +105,15 @@ export default function GoalsTab({ goals, saveGoals }) {
           </div>
         )}
       </div>
+
+      {calcOpen && (
+        <MacroCalculatorModal
+          goals={goals}
+          calculateMacros={calculateMacros}
+          saveGoals={saveGoals}
+          onClose={() => setCalcOpen(false)}
+        />
+      )}
     </div>
   )
 }
