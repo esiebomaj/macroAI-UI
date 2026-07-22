@@ -167,9 +167,63 @@ export default function ChatPanel({ refetchAll, isMobile = false, onClose }) {
   const [pendingImages, setPendingImages] = useState([]) // array of data URLs
   const [converting, setConverting] = useState(false) // true while HEIC->JPEG conversion runs
   const [attachError, setAttachError] = useState('')
+  const [listening, setListening] = useState(false) // true while capturing speech
+  const [speechSupported, setSpeechSupported] = useState(false)
   const messagesRef = useRef(null)
   const fileInputRef = useRef(null)
   const headerSwipeStartY = useRef(null)
+  const recognitionRef = useRef(null)
+  const baseInputRef = useRef('') // text already in the box when recording started
+  const listeningRef = useRef(false) // guards late onresult events fired after stop()
+
+  // Set up the browser's Web Speech API once. Supported in Chrome/Edge/Safari
+  // (incl. iOS); on unsupported browsers (e.g. Firefox) the mic button is hidden.
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SpeechRecognition) return
+    setSpeechSupported(true)
+
+    const recognition = new SpeechRecognition()
+    recognition.continuous = true
+    recognition.interimResults = true
+    recognition.lang = 'en-US'
+
+    recognition.onresult = (e) => {
+      // Ignore the final result the browser emits right after stop()/send —
+      // otherwise it would refill the input we just cleared.
+      if (!listeningRef.current) return
+      let transcript = ''
+      for (let i = 0; i < e.results.length; i++) {
+        transcript += e.results[i][0].transcript
+      }
+      const base = baseInputRef.current
+      setInput(base ? `${base} ${transcript}` : transcript)
+    }
+    recognition.onend = () => { listeningRef.current = false; setListening(false) }
+    recognition.onerror = () => { listeningRef.current = false; setListening(false) }
+
+    recognitionRef.current = recognition
+    return () => {
+      try { recognition.stop() } catch { /* already stopped */ }
+    }
+  }, [])
+
+  function toggleListening() {
+    const recognition = recognitionRef.current
+    if (!recognition || busy) return
+    if (listening) {
+      listeningRef.current = false
+      try { recognition.stop() } catch { /* noop */ }
+      setListening(false)
+      return
+    }
+    baseInputRef.current = input.trim()
+    try {
+      recognition.start()
+      listeningRef.current = true
+      setListening(true)
+    } catch { /* start() throws if already running; ignore */ }
+  }
 
   function handleHeaderTouchStart(e) {
     if (!isMobile || !onClose) return
@@ -258,6 +312,11 @@ export default function ChatPanel({ refetchAll, isMobile = false, onClose }) {
     const text = input.trim()
     const images = pendingImages
     if ((!text && images.length === 0) || busy) return
+    if (listening) {
+      listeningRef.current = false
+      try { recognitionRef.current?.stop() } catch { /* noop */ }
+      setListening(false)
+    }
     setInput('')
     setPendingImages([])
     setBusy(true)
@@ -292,7 +351,7 @@ export default function ChatPanel({ refetchAll, isMobile = false, onClose }) {
   }
 
   const rootStyle = isMobile
-    ? { display: 'flex', flexDirection: 'column', background: '#161616', height: '100dvh', width: '100%' }
+    ? { display: 'flex', flexDirection: 'column', background: '#161616', flex: 1, minHeight: 0, width: '100%' }
     : { display: 'flex', flexDirection: 'column', background: '#161616', height: '100vh', position: 'sticky', top: 0 }
 
   const pad = isMobile ? '1rem 1rem' : '1.2rem 1.5rem'
@@ -548,10 +607,37 @@ export default function ChatPanel({ refetchAll, isMobile = false, onClose }) {
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKey}
               onPaste={onPaste}
-              placeholder={pendingImages.length ? 'Add a note…' : 'Tell me what you ate…'}
+              placeholder={listening ? 'Listening… speak now' : (pendingImages.length ? 'Add a note…' : 'Tell me what you ate…')}
               style={{ width: '100%', height: 44, padding: '11px 12px 11px 40px', background: '#1f1f1f', border: '1px solid #2a2a2a', borderRadius: 8, color: 'white', fontSize: 16, lineHeight: '20px', fontFamily: 'DM Sans, sans-serif', outline: 'none', resize: 'none', minWidth: 0, boxSizing: 'border-box' }}
             />
           </div>
+          {speechSupported && (
+            <button
+              type="button"
+              onClick={toggleListening}
+              disabled={busy}
+              aria-label={listening ? 'Stop recording' : 'Speak to log'}
+              title={listening ? 'Tap to stop recording' : 'Tap and speak to log by voice'}
+              style={{
+                height: 44, width: 44,
+                background: listening ? '#ff5f5f' : 'transparent',
+                color: listening ? '#0e0e0e' : '#c8f066',
+                border: listening ? 'none' : '1px solid #2a2a2a',
+                borderRadius: 8, cursor: busy ? 'not-allowed' : 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0, boxSizing: 'border-box', padding: 0,
+                opacity: busy ? 0.5 : 1,
+                animation: listening ? 'pulse 1.5s infinite' : 'none',
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block' }}>
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="23" />
+                <line x1="8" y1="23" x2="16" y2="23" />
+              </svg>
+            </button>
+          )}
           <button
             onClick={send}
             disabled={busy || (!input.trim() && pendingImages.length === 0)}
